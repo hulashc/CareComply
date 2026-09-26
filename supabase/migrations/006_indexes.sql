@@ -1,0 +1,10 @@
+CREATE INDEX IF NOT EXISTS idx_care_notes_client ON care_notes(client_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_shifts_start ON shifts(start_time, status);
+CREATE INDEX IF NOT EXISTS idx_shifts_client ON shifts(client_id);
+CREATE INDEX IF NOT EXISTS idx_documents_owner ON documents(owner_id, status);
+CREATE INDEX IF NOT EXISTS idx_documents_expiry ON documents(expiry_date);
+CREATE INDEX IF NOT EXISTS idx_applications_status ON applications(status, invited_at DESC);
+CREATE INDEX IF NOT EXISTS idx_incidents_status ON incidents(status, reported_at DESC);
+CREATE INDEX IF NOT EXISTS idx_incidents_client ON incidents(client_id);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_org ON audit_logs(org_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_qualifications_carer ON qualifications(carer_id);
