@@ -3,8 +3,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
-  TrendingUp, TrendingDown, Activity, BarChart3, Users, Heart, Clock,
-  CheckCircle2, XCircle, AlertTriangle, FileText, MessageSquare, CalendarX,
+  TrendingUp, Users, Heart, Clock,
+  CheckCircle2, AlertTriangle, FileText, MessageSquare, CalendarX,
   MapPin, ArrowUpRight, ArrowDownRight
 } from "lucide-react";
 import dynamic from "next/dynamic";
@@ -28,8 +28,6 @@ type Props = {
   incidents: Incident[]; documents: Document[]; notes: CareNote[];
   handovers: HandoverNote[]; absences: Absence[]; locations: Location[];
 };
-
-function cn(...classes: (string | false | undefined | null)[]) { return classes.filter(Boolean).join(" "); }
 
 function StatCard({ label, value, sub, icon: Icon, trend, color }: { label: string; value: string; sub?: string; icon: React.ElementType; trend?: "up" | "down" | "neutral"; color?: string }) {
   return (
@@ -83,7 +81,6 @@ export default function AnalyticsContent(props: Props) {
   const missedShifts = shifts.filter(s => s.status === "missed" || s.status === "cancelled").length;
   const confirmedShifts = shifts.filter(s => s.status === "confirmed").length;
   const shiftCompletionRate = totalShifts > 0 ? Math.round((completedShifts / totalShifts) * 100) : 0;
-  const shiftMissRate = totalShifts > 0 ? Math.round((missedShifts / totalShifts) * 100) : 0;
 
   const totalTasks = tasks.length;
   const completedTasks = tasks.filter(t => t.status === "completed").length;
@@ -239,9 +236,7 @@ export default function AnalyticsContent(props: Props) {
                   const shifts = shiftsByCarer[c.id];
                   const tasks = taskByCarer[c.id];
                   const hrs = hoursByCarer[c.id] ?? 0;
-                  const notesCount = noteCountByCarer[c.id] ?? 0;
                   const absenceCount = absences.filter(a => a.carer_id === c.id).length;
-                  const handoverCount = handovers.filter(h => h.from_carer_id === c.id).length;
                   return (
                     <div key={c.id} className="rounded-xl bg-muted/50 px-4 py-3">
                       <div className="flex items-center justify-between mb-2">

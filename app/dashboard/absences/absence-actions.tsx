@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import type { Tables } from "@/lib/database.types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -32,13 +33,23 @@ const statusColors: Record<string, string> = {
   rejected: "bg-red-100 text-red-700",
 };
 
+type CarerOption = Pick<Tables<"carers">, "id" | "full_name">;
+type AbsenceRow = Tables<"absences"> & {
+  carers: { full_name: string } | { full_name: string }[] | null;
+};
+
+function carerName(c: AbsenceRow["carers"]): string {
+  const x = Array.isArray(c) ? c[0] : c;
+  return x?.full_name ?? "";
+}
+
 export function AbsenceActions({
   initialAbsences,
   initialCarers,
   currentStatus,
 }: {
-  initialAbsences: any[];
-  initialCarers: any[];
+  initialAbsences: AbsenceRow[];
+  initialCarers: CarerOption[];
   currentStatus: string;
 }) {
   const [absences, setAbsences] = useState(initialAbsences);
@@ -53,7 +64,6 @@ export function AbsenceActions({
   const [search, setSearch] = useState("");
   const [confirmAction, setConfirmAction] = useState<{ id: string; action: "approve" | "reject" } | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const router = useRouter();
   const searchParams = useSearchParams();
 
   async function loadData() {
@@ -64,7 +74,7 @@ export function AbsenceActions({
       .select("*, carers(full_name)")
       .order("created_at", { ascending: false });
     if (status && status !== "all") query = query.eq("status", status);
-    const { data: a } = await query;
+    const { data: a } = await query.returns<AbsenceRow[]>();
     setAbsences(a ?? []);
   }
 
@@ -117,7 +127,7 @@ export function AbsenceActions({
   }
 
   const searched = absences.filter(a =>
-    !search || (a.carers?.full_name ?? "").toLowerCase().includes(search.toLowerCase())
+    !search || carerName(a.carers).toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -157,7 +167,7 @@ export function AbsenceActions({
                       <SelectValue placeholder="Select carer" />
                     </SelectTrigger>
                     <SelectContent>
-                      {carers.map((c: any) => (
+                      {carers.map((c) => (
                         <SelectItem key={c.id} value={c.id}>{c.full_name}</SelectItem>
                       ))}
                     </SelectContent>
@@ -199,7 +209,7 @@ export function AbsenceActions({
       )}
 
       <div className="space-y-3">
-        {searched.map((a: any) => (
+        {searched.map((a) => (
           <Card key={a.id} className="rounded-xl border border-border/50 shadow-card">
             <CardContent className="p-5">
               <div className="flex items-center justify-between">
@@ -208,7 +218,7 @@ export function AbsenceActions({
                     <CalendarX className="h-5 w-5 text-muted-foreground" />
                   </div>
                   <div>
-                    <p className="font-medium">{a.carers?.full_name ?? "Unknown"}</p>
+                    <p className="font-medium">{carerName(a.carers) || "Unknown"}</p>
                     <div className="flex items-center gap-2 mt-0.5">
                       <Badge className={`rounded-md text-[10px] ${typeColors[a.absence_type] || ""}`}>
                         {a.absence_type.replace("_", " ")}

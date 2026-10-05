@@ -1,9 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentAdmin } from "@/lib/services/auth-guard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Clock, MapPin, CheckCircle2, Circle, MessageSquare, Pill, ClipboardList, Smartphone } from "lucide-react";
+import { Clock, MapPin, Circle, MessageSquare, Smartphone } from "lucide-react";
 import Link from "next/link";
 import { StatusBadge } from "@/components/shared/status-badge";
 import type { Tables } from "@/lib/database.types";
@@ -13,10 +12,6 @@ export default async function CarerPortalPage() {
   const admin = await getCurrentAdmin();
   const orgId = admin?.org_id ?? "";
   const today = new Date().toISOString().split("T")[0];
-
-  const { data: carers } = await supabase.from("carers").select("id, full_name").eq("org_id", orgId).limit(10);
-
-  const firstCarerId = carers?.[0]?.id;
 
   const { data: shifts } = await supabase
     .from("shifts")

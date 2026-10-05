@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getCurrentAdmin } from "@/lib/services/auth-guard";
 import { rateLimit } from "@/lib/rate-limit";

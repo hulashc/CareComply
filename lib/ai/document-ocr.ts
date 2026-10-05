@@ -6,7 +6,7 @@ export type OcrResult = {
   confidence: number;
 };
 
-export async function runOcr(fileBuffer: Buffer, mimeType: string): Promise<OcrResult> {
+export async function runOcr(fileBuffer: Buffer): Promise<OcrResult> {
   const lang = process.env.TESSERACT_LANG || "eng";
   const worker = await createWorker(lang);
 

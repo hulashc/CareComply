@@ -18,6 +18,11 @@ type ShiftFormProps = {
   carers: { id: string; full_name: string }[];
 };
 
+type ConflictShift = {
+  start_time: string;
+  clients: { full_name: string } | { full_name: string }[] | null;
+};
+
 export default function ShiftForm({ clients, carers }: ShiftFormProps) {
   const router = useRouter();
   const { toast } = useToast();
@@ -32,14 +37,14 @@ export default function ShiftForm({ clients, carers }: ShiftFormProps) {
   const [recurrenceEnd, setRecurrenceEnd] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const [conflicts, setConflicts] = useState<any[]>([]);
+  const [conflicts, setConflicts] = useState<ConflictShift[]>([]);
 
   useEffect(() => {
     if (!carerId || !date || !startTime || !endTime) { setConflicts([]); return; }
     const supabase = createClient();
     const start = `${date}T${startTime}:00`;
     const end = `${date}T${endTime}:00`;
-    supabase.from("shifts").select("*, clients(full_name)").eq("carer_id", carerId).neq("status", "cancelled").lte("start_time", end).gte("end_time", start).then(({ data }) => setConflicts(data ?? []));
+    supabase.from("shifts").select("*, clients(full_name)").eq("carer_id", carerId).neq("status", "cancelled").lte("start_time", end).gte("end_time", start).returns<ConflictShift[]>().then(({ data }) => setConflicts(data ?? []));
   }, [carerId, date, startTime, endTime]);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -144,7 +149,10 @@ export default function ShiftForm({ clients, carers }: ShiftFormProps) {
             {conflicts.length > 0 && (
               <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-700 flex items-center gap-2">
                 <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
-                {conflicts.length} overlapping shift{conflicts.length !== 1 ? "s" : ""}: {conflicts.map(c => `${c.clients?.full_name ?? "Unknown"} (${new Date(c.start_time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })})`).join(", ")}
+                {conflicts.length} overlapping shift{conflicts.length !== 1 ? "s" : ""}: {conflicts.map(c => {
+                  const client = Array.isArray(c.clients) ? c.clients[0] : c.clients;
+                  return `${client?.full_name ?? "Unknown"} (${new Date(c.start_time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })})`;
+                }).join(", ")}
               </div>
             )}
             <div>

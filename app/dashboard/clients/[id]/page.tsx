@@ -3,7 +3,7 @@ import { getCurrentAdmin } from "@/lib/services/auth-guard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Heart, Calendar, MapPin, FileText, MessageSquare, Shield, Phone, CalendarClock, CheckCircle2, Clock, Pill, ClipboardList, Stethoscope } from "lucide-react";
+import { ArrowLeft, Heart, Calendar, MapPin, FileText, MessageSquare, Shield, CalendarClock, CheckCircle2, Clock, Pill, ClipboardList, Stethoscope } from "lucide-react";
 import Link from "next/link";
 import { EmptyState } from "@/components/shared/empty-state";
 import { DeleteButton } from "@/components/shared/delete-button";

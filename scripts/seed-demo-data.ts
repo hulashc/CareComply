@@ -11,7 +11,7 @@ const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
 const supabase = createClient(supabaseUrl, serviceRoleKey, {
   auth: { autoRefreshToken: false, persistSession: false },
-  realtime: { transport: WebSocket as unknown as any },
+  realtime: { transport: WebSocket },
 });
 
 async function seed() {
@@ -133,10 +133,6 @@ async function seed() {
 
   // Function to get random carer
   const randomCarer = () => carers[Math.floor(Math.random() * carers.length)];
-  const randomCarers = (n: number) => {
-    const shuffled = [...carers].sort(() => Math.random() - 0.5);
-    return shuffled.slice(0, n);
-  };
 
   // ---- 5. Clients ----
   const clientsData = [
@@ -162,8 +158,6 @@ async function seed() {
   if (clientErr) throw new Error(`Failed to create clients: ${clientErr.message}`);
   const clients = clientRows!;
   console.log(`Created ${clients.length} clients`);
-
-  const randomClient = () => clients[Math.floor(Math.random() * clients.length)];
 
   // ---- 6. Documents ----
   const now = new Date();
@@ -246,8 +240,6 @@ async function seed() {
     { clientOffset: 11, dayOffset: 12, startHour: 7, endHour: 14 },
     { clientOffset: 3, dayOffset: 12, startHour: 14, endHour: 21 },
   ];
-
-  const shiftStatuses = ["scheduled", "scheduled", "scheduled", "scheduled", "completed"];
 
   const shiftInserts = shiftPatterns.map((s, i) => {
     const clientIdx = s.clientOffset % clients.length;

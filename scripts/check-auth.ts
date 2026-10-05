@@ -27,7 +27,7 @@ async function main() {
   }
 
   const { data: users } = await supabase.auth.admin.listUsers();
-  const lucy = users?.users.find((u: any) => u.email === "lucy.chen@heritagecare.co.uk");
+  const lucy = users?.users.find((u) => u.email === "lucy.chen@heritagecare.co.uk");
   if (lucy) {
     console.log("Auth user found:", lucy.id, lucy.email);
   } else {

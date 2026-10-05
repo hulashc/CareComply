@@ -1,6 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/services/auth-guard";
 import { createAdminClient } from "@/lib/supabase/admin";
+import type { Tables, TablesInsert } from "@/lib/database.types";
 
 function now(offsetDays = 0): string {
   const d = new Date();
@@ -18,7 +19,7 @@ function randomItem<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-export async function POST(_req: NextRequest) {
+export async function POST() {
   try {
     const supabase = createAdminClient();
     const admin = await requireAdmin();
@@ -85,7 +86,7 @@ export async function POST(_req: NextRequest) {
     ];
     const { data: carers, error: carErr } = await supabase.from("carers").insert(carersData).select();
     if (carErr) throw new Error("Carers: " + carErr.message);
-    const [sarah, james, priya, david, emily, mohammed, lucy, thomas, rebecca, daniel] = carers!;
+    const [, james, priya, , , , lucy, thomas] = carers!;
 
     // ── Qualifications (one per carer) ──────────────────────────────────
     const quals = carers!.map((c, i) => ({
@@ -100,7 +101,7 @@ export async function POST(_req: NextRequest) {
     if (qErr) throw new Error("Qualifications: " + qErr.message);
 
     // ── Documents (2-3 per carer, plus some expired/pending) ───────────
-    const docInserts: any[] = [];
+    const docInserts: TablesInsert<"documents">[] = [];
     carers!.forEach((c) => {
       const dtList = dts!;
       const picked = dtList.slice(0, 2 + Math.floor(Math.random() * 2));
@@ -121,10 +122,9 @@ export async function POST(_req: NextRequest) {
     if (docErr) throw new Error("Documents: " + docErr.message);
 
     // ── Shifts (past 14 days + next 7 days, 4-6 per day) ──────────────
-    const shiftInserts: any[] = [];
+    const shiftInserts: TablesInsert<"shifts">[] = [];
     const allCarers = carers!;
     const allClients = cli!;
-    const shiftTypes = ["07:00", "08:00", "09:00", "14:00", "15:00", "20:00", "21:00", "22:00"];
     const shiftDurations = [
       { start: "07:00", end: "15:00" },
       { start: "08:00", end: "16:00" },
@@ -179,7 +179,7 @@ export async function POST(_req: NextRequest) {
       { title: "Change dressing", category: "medical", priority: "high" },
       { title: "Prepare for bedtime", category: "personal_care", priority: "medium" },
     ];
-    const taskInserts: any[] = [];
+    const taskInserts: TablesInsert<"tasks">[] = [];
     allClients.forEach((client) => {
       const numTasks = 3 + Math.floor(Math.random() * 5);
       for (let t = 0; t < numTasks; t++) {
@@ -235,12 +235,12 @@ export async function POST(_req: NextRequest) {
     if (cnErr) throw new Error("Care Notes: " + cnErr.message);
 
     // ── Handover Notes (between shifts) ─────────────────────────────────
-    const groupedByClient: Record<string, any[]> = {};
+    const groupedByClient: Record<string, Tables<"shifts">[]> = {};
     completedShifts.forEach((s) => {
       if (!groupedByClient[s.client_id]) groupedByClient[s.client_id] = [];
       groupedByClient[s.client_id].push(s);
     });
-    const handoverInserts: any[] = [];
+    const handoverInserts: TablesInsert<"handover_notes">[] = [];
     Object.values(groupedByClient).forEach((shiftsForClient) => {
       shiftsForClient.sort((a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime());
       for (let i = 0; i < shiftsForClient.length - 1; i++) {
@@ -268,7 +268,6 @@ export async function POST(_req: NextRequest) {
     if (hoErr) throw new Error("Handovers: " + hoErr.message);
 
     // ── Absences (3-4) ──────────────────────────────────────────────────
-    const absenceCarers = [james!.id, priya!.id, lucy!.id, thomas!.id];
     const absences = [
       { carer_id: james!.id, org_id: orgId, absence_type: "sick_leave", start_date: dateStr(-10), end_date: dateStr(-8), status: "approved", reason: "Flu symptoms", approved_by: adminId, approved_at: now(-11) },
       { carer_id: priya!.id, org_id: orgId, absence_type: "holiday", start_date: dateStr(14), end_date: dateStr(21), status: "approved", reason: "Annual leave - family holiday to Spain", approved_by: adminId, approved_at: now(-5) },

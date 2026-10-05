@@ -5,8 +5,8 @@ import { MarketingFooter } from "@/components/shared/marketing-footer";
 import { Badge } from "@/components/ui/badge";
 import { Metadata } from "next";
 import {
-  Shield, Heart, Users, BarChart3, MessageSquare, ArrowRight,
-  FileCheck, ClipboardList, Pill, CalendarClock, Download, ArrowLeft
+  Shield, Heart, BarChart3, MessageSquare, ArrowRight,
+  ClipboardList, Download
 } from "lucide-react";
 
 export const metadata: Metadata = {

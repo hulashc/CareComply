@@ -45,7 +45,7 @@ export default async function AdminAdminsPage() {
                         <Badge variant="outline">{a.role ?? "admin"}</Badge>
                       )}
                     </td>
-                    <td className="px-4 py-3 text-muted-foreground">{(a.organizations as any)?.name ?? "—"}</td>
+                    <td className="px-4 py-3 text-muted-foreground">{(Array.isArray(a.organizations) ? a.organizations[0]?.name : a.organizations?.name) ?? "—"}</td>
                     <td className="px-4 py-3 text-muted-foreground font-mono text-xs">{a.id.slice(0, 8)}...</td>
                   </tr>
                 ))}

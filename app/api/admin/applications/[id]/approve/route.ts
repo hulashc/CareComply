@@ -10,7 +10,6 @@ import type { Tables, TablesInsert } from "@/lib/database.types";
 import { rateLimit } from "@/lib/rate-limit";
 import { dispatchJob } from "@/lib/jobs/queue";
 
-type ApplicationRow = Tables<"applications">;
 type ApplicationDocRow = Tables<"application_documents">;
 
 export async function POST(

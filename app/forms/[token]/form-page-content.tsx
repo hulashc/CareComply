@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import FormRenderer from "./form-renderer";
+import FormRenderer, { type FormSchema } from "./form-renderer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText } from "lucide-react";
 
@@ -58,7 +58,7 @@ export default async function FormPageContent({ token }: { token: string }) {
           <CardTitle className="text-xl font-bold tracking-tight">{link.form_templates.name}</CardTitle>
         </CardHeader>
         <CardContent>
-          <FormRenderer schema={link.form_templates.schema} token={token} />
+          <FormRenderer schema={link.form_templates.schema as unknown as FormSchema} token={token} />
         </CardContent>
       </Card>
     </div>

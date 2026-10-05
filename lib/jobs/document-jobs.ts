@@ -12,10 +12,9 @@ export async function processDocumentJob(job: Job): Promise<void> {
       const docId = p.documentId as string;
       const bucket = (p.bucket as string) || "applicant-documents";
       const filePath = p.filePath as string;
-      const mimeType = (p.mimeType as string) || "application/pdf";
       const applicantName = (p.applicantName as string) || null;
 
-      await processDocumentOcr(docId, bucket, filePath, mimeType, applicantName);
+      await processDocumentOcr(docId, bucket, filePath, applicantName);
       break;
     }
     default:
@@ -27,7 +26,6 @@ async function processDocumentOcr(
   docId: string,
   bucket: string,
   filePath: string,
-  mimeType: string,
   applicantName: string | null,
 ): Promise<void> {
   const supabase = createAdminClient();
@@ -37,7 +35,7 @@ async function processDocumentOcr(
     throw new Error(`Failed to download file from ${bucket}/${filePath}`);
   }
 
-  const ocrResult = await runOcr(buffer, mimeType);
+  const ocrResult = await runOcr(buffer);
 
   const classification = await classifyDocument(
     filePath.split("/").pop() || filePath,

@@ -1,5 +1,6 @@
 import { getCurrentAdmin } from "@/lib/services/auth-guard";
 import { createClient } from "@supabase/supabase-js";
+import type { PostgrestError } from "@supabase/supabase-js";
 import type { Database } from "@/lib/database.types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText, CheckCircle2, AlertTriangle, CalendarClock, Users, Heart, Clock, Send, AlertOctagon, Activity, ChevronRight, XCircle, AlertCircle } from "lucide-react";
@@ -33,7 +34,7 @@ async function fetchData(orgId: string) {
   const today = new Date().toISOString().split("T")[0];
   const errors: string[] = [];
 
-  const push = (label: string, err: any) => {
+  const push = (label: string, err: PostgrestError | null) => {
     if (err) errors.push(`${label}: ${err.message || err}`);
   };
 
@@ -65,21 +66,21 @@ async function fetchData(orgId: string) {
   push("audit_logs", e9);
 
   // Fetch related names separately
-  const clientIds = [...new Set([...(rawShifts ?? []).map((s: any) => s.client_id), ...(rawIncidents ?? []).map((i: any) => i.client_id)])];
-  const carerIds = [...new Set([...(rawShifts ?? []).map((s: any) => s.carer_id)])];
-  const adminIds = [...new Set([...(rawAudit ?? []).map((a: any) => a.actor_id).filter(Boolean)])];
+  const clientIds = [...new Set([...(rawShifts ?? []).map((s) => s.client_id), ...(rawIncidents ?? []).map((i) => i.client_id)])].filter((id): id is string => id !== null);
+  const carerIds = [...new Set([...(rawShifts ?? []).map((s) => s.carer_id)])].filter((id): id is string => id !== null);
+  const adminIds = [...new Set([...(rawAudit ?? []).map((a) => a.actor_id)])].filter((id): id is string => id !== null);
 
   const { data: clientNames } = clientIds.length > 0 ? await supabase.from("clients").select("id, full_name").in("id", clientIds) : { data: [] };
   const { data: carerNames } = carerIds.length > 0 ? await supabase.from("carers").select("id, full_name").in("id", carerIds) : { data: [] };
   const { data: adminNames } = adminIds.length > 0 ? await supabase.from("admins").select("id, full_name").in("id", adminIds) : { data: [] };
 
-  const clientMap = new Map((clientNames ?? []).map((c: any) => [c.id, c]));
-  const carerNameMap = new Map((carerNames ?? []).map((c: any) => [c.id, c]));
-  const adminMap = new Map((adminNames ?? []).map((a: any) => [a.id, a]));
+  const clientMap = new Map((clientNames ?? []).map((c) => [c.id, c]));
+  const carerNameMap = new Map((carerNames ?? []).map((c) => [c.id, c]));
+  const adminMap = new Map((adminNames ?? []).map((a) => [a.id, a]));
 
-  const upcomingShifts = (rawShifts ?? []).map((s: any) => ({ ...s, clients: clientMap.get(s.client_id) ?? null, carers: carerNameMap.get(s.carer_id) ?? null }));
-  const openIncidentsList = (rawIncidents ?? []).map((i: any) => ({ ...i, clients: clientMap.get(i.client_id) ?? null }));
-  const auditLogs = (rawAudit ?? []).map((a: any) => ({ ...a, admins: adminMap.get(a.actor_id) ?? null }));
+  const upcomingShifts = (rawShifts ?? []).map((s) => ({ ...s, clients: clientMap.get(s.client_id) ?? null, carers: (s.carer_id ? carerNameMap.get(s.carer_id) : null) ?? null }));
+  const openIncidentsList = (rawIncidents ?? []).map((i) => ({ ...i, clients: clientMap.get(i.client_id) ?? null }));
+  const auditLogs = (rawAudit ?? []).map((a) => ({ ...a, admins: (a.actor_id ? adminMap.get(a.actor_id) : null) ?? null }));
 
   return {
     carers: carers ?? [],
@@ -104,11 +105,11 @@ export default async function DashboardPage() {
     openIncidentsCount, upcomingShifts, openIncidentsList, auditLogs, errors,
   } = await fetchData(orgId);
 
-  const carerMap = new Map(carers.map((c: any) => [c.id, c]));
-  const docTypeMap = new Map(docTypes.map((dt: any) => [dt.id, dt.name]));
-  const expiredDocs = documents.filter((d: any) => d.status === "red");
-  const expiringDocs = documents.filter((d: any) => d.status === "amber");
-  const compliantCount = documents.filter((d: any) => d.status === "green").length;
+  const carerMap = new Map(carers.map((c) => [c.id, c]));
+  const docTypeMap = new Map(docTypes.map((dt) => [dt.id, dt.name]));
+  const expiredDocs = documents.filter((d) => d.status === "red");
+  const expiringDocs = documents.filter((d) => d.status === "amber");
+  const compliantCount = documents.filter((d) => d.status === "green").length;
 
   const stats = [
     { label: "Carers", value: carers.length, icon: Users, href: "/dashboard/carers", color: "text-primary" },
@@ -163,7 +164,7 @@ export default async function DashboardPage() {
                   </CardHeader>
                   <CardContent className="p-0">
                     <div className="divide-y divide-red-100 dark:divide-red-900/30">
-                      {expiredDocs.map((doc: any) => {
+                      {expiredDocs.map((doc) => {
                         const carer = carerMap.get(doc.owner_id);
                         const daysOverdue = -daysFromNow(doc.expiry_date!);
                         return (
@@ -203,7 +204,7 @@ export default async function DashboardPage() {
                   </CardHeader>
                   <CardContent className="p-0">
                     <div className="divide-y divide-amber-100 dark:divide-amber-900/30">
-                      {expiringDocs.map((doc: any) => {
+                      {expiringDocs.map((doc) => {
                         const carer = carerMap.get(doc.owner_id);
                         const daysLeft = daysFromNow(doc.expiry_date!);
                         return (
@@ -257,7 +258,7 @@ export default async function DashboardPage() {
                 </CardHeader>
                 <CardContent className="p-0">
                   <div className="divide-y divide-border/20">
-                    {upcomingShifts.map((shift: any) => (
+                    {upcomingShifts.map((shift) => (
                       <div key={shift.id} className="flex items-center justify-between px-4 py-2 hover:bg-muted/30 transition-colors">
                         <div className="flex items-center gap-2.5 min-w-0">
                           <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-primary/10">
@@ -297,7 +298,7 @@ export default async function DashboardPage() {
                 </CardHeader>
                 <CardContent className="p-0">
                   <div className="divide-y divide-red-200/30 dark:divide-red-900/30">
-                    {openIncidentsList.map((incident: any) => (
+                    {openIncidentsList.map((incident) => (
                       <div key={incident.id} className="flex items-center justify-between px-4 py-2 hover:bg-red-50/30 dark:hover:bg-red-950/10 transition-colors">
                         <div className="min-w-0">
                           <p className="text-sm font-medium truncate">{incident.title}</p>
@@ -330,7 +331,7 @@ export default async function DashboardPage() {
             <CardContent className="p-0">
               {auditLogs.length > 0 ? (
                 <div className="divide-y divide-border/20">
-                  {auditLogs.map((entry: any) => (
+                  {auditLogs.map((entry) => (
                     <div key={entry.id} className="flex items-center gap-2.5 px-4 py-2 hover:bg-muted/30 transition-colors">
                       <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-secondary/10">
                         <Clock className="h-3 w-3 text-secondary" />

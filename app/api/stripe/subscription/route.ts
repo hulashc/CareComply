@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/services/auth-guard";
 import { getStripe } from "@/lib/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendSubscriptionConfirmation } from "@/lib/services/notification-service";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const admin = await requireAdmin();
     const adminClient = createAdminClient();

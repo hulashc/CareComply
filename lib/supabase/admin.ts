@@ -1,13 +1,11 @@
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/database.types";
+import { WebSocket as NodeWebSocket } from "ws";
 
-let wsTransport: any = undefined;
-if (typeof globalThis !== "undefined" && !globalThis.WebSocket) {
-  try {
-    const { WebSocket } = require("ws");
-    wsTransport = WebSocket;
-  } catch {}
-}
+const wsTransport =
+  typeof globalThis !== "undefined" && !globalThis.WebSocket
+    ? (NodeWebSocket as unknown as typeof WebSocket)
+    : undefined;
 
 export function createAdminClient() {
   return createClient<Database>(

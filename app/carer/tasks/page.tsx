@@ -4,10 +4,10 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, CheckCircle2, Search, ClipboardList, ArrowLeft, Clock, Filter } from "lucide-react";
+import { Loader2, CheckCircle2, Search, ClipboardList, ArrowLeft, Clock } from "lucide-react";
 import { EmptyState } from "@/components/shared/empty-state";
 import Link from "next/link";
-import { carerApi } from "@/lib/carer-api";
+import { carerApi, clientJoinName, type CarerTask } from "@/lib/carer-api";
 
 const priorityColors: Record<string, string> = {
   low: "bg-blue-50 text-blue-600",
@@ -17,7 +17,7 @@ const priorityColors: Record<string, string> = {
 
 export default function CarerTasksPage() {
   const router = useRouter();
-  const [tasks, setTasks] = useState<any[]>([]);
+  const [tasks, setTasks] = useState<CarerTask[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -38,7 +38,7 @@ export default function CarerTasksPage() {
   }
 
   const filtered = tasks.filter(t => {
-    const matchesSearch = t.title.toLowerCase().includes(search.toLowerCase()) || (t.clients?.full_name ?? "").toLowerCase().includes(search.toLowerCase());
+    const matchesSearch = t.title.toLowerCase().includes(search.toLowerCase()) || clientJoinName(t.clients).toLowerCase().includes(search.toLowerCase());
     const matchesStatus = statusFilter === "all" || t.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
@@ -107,8 +107,8 @@ export default function CarerTasksPage() {
                       <div className="min-w-0">
                         <p className="text-sm font-semibold text-slate-800 truncate">{t.title}</p>
                         <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-                          <span className="text-xs text-slate-500">{t.clients?.full_name ?? "—"}</span>
-                          <Badge className={`rounded-full text-[10px] font-semibold border-0 ${priorityColors[t.priority] || "bg-slate-50 text-slate-600"}`}>{t.priority || "normal"}</Badge>
+                          <span className="text-xs text-slate-500">{clientJoinName(t.clients) || "—"}</span>
+                          <Badge className={`rounded-full text-[10px] font-semibold border-0 ${priorityColors[t.priority ?? ""] || "bg-slate-50 text-slate-600"}`}>{t.priority || "normal"}</Badge>
                           {t.due_date && (
                             <span className="text-[11px] text-slate-500 flex items-center gap-1">
                               <Clock className="h-3 w-3" />{new Date(t.due_date).toLocaleDateString()}
@@ -136,7 +136,7 @@ export default function CarerTasksPage() {
                 <div key={t.id} className="flex items-center gap-2.5 rounded-lg border border-slate-100 bg-slate-50/50 p-2.5 text-sm opacity-70">
                   <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
                   <span className="line-through text-slate-500 font-medium truncate">{t.title}</span>
-                  <span className="text-xs text-slate-400 ml-auto shrink-0">{t.clients?.full_name ?? ""}</span>
+                  <span className="text-xs text-slate-400 ml-auto shrink-0">{clientJoinName(t.clients)}</span>
                 </div>
               ))}
             </div>

@@ -2,7 +2,6 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useToast } from "@/components/shared/toast";
 
@@ -29,7 +28,6 @@ import {
 } from "@/components/ui/select";
 
 export default function AddCarerForm() {
-  const router = useRouter();
   const { toast } = useToast();
   const [submitting, setSubmitting] = useState(false);
 

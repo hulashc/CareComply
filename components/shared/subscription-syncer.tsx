@@ -21,7 +21,7 @@ const nextSteps = [
   { label: "Schedule shifts", desc: "Build your roster so carers know when to work.", href: "/dashboard/shifts", icon: CalendarClock },
 ];
 
-export function SubscriptionSyncer({ isActive, seatsPurchased, carerCount, monthlyCost, hasStripeCustomer, hasSubscriptionId }: SubscriptionSyncerProps) {
+export function SubscriptionSyncer({ isActive, seatsPurchased, carerCount, monthlyCost, hasSubscriptionId }: SubscriptionSyncerProps) {
   const searchParams = useSearchParams();
   const justPaid = searchParams.get("success") === "true";
   const [syncing, setSyncing] = useState(justPaid);

@@ -4,10 +4,27 @@ import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Mic, MicOff, Loader2, Sparkles } from "lucide-react";
 
+interface SpeechRecognitionEvent {
+  results: { 0: { transcript: string } }[];
+}
+
+interface SpeechRecognitionInstance {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  onresult: ((event: SpeechRecognitionEvent) => void) | null;
+  onerror: (() => void) | null;
+  onend: (() => void) | null;
+  start: () => void;
+  stop: () => void;
+}
+
+type SpeechRecognitionConstructor = new () => SpeechRecognitionInstance;
+
 declare global {
   interface Window {
-    SpeechRecognition: any;
-    webkitSpeechRecognition: any;
+    SpeechRecognition?: SpeechRecognitionConstructor;
+    webkitSpeechRecognition?: SpeechRecognitionConstructor;
   }
 }
 
@@ -38,7 +55,7 @@ export function VoiceInput({ onResult }: VoiceInputProps) {
   const [listening, setListening] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [supported, setSupported] = useState(false);
-  const recognitionRef = useRef<any>(null);
+  const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
 
   useEffect(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -73,7 +90,7 @@ export function VoiceInput({ onResult }: VoiceInputProps) {
     recognition.interimResults = false;
     recognition.lang = "en-GB";
 
-    recognition.onresult = (event: any) => {
+    recognition.onresult = (event: SpeechRecognitionEvent) => {
       const transcript = event.results[0][0].transcript;
       const suggestions = extractSuggestions(transcript);
       setProcessing(true);

@@ -1,9 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentAdmin } from "@/lib/services/auth-guard";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { CalendarClock, Users, MapPin, Clock, LayoutList, CalendarDays } from "lucide-react";
+import { CalendarClock, Users, MapPin, Clock } from "lucide-react";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ShiftActions } from "@/components/shared/shift-actions";
 import { ShiftCalendar } from "@/components/shared/shift-calendar";

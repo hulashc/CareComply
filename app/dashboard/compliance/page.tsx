@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentAdmin } from "@/lib/services/auth-guard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FileCheck, ShieldCheck, AlertTriangle, CheckCircle2, Users, Heart, Clock, Download, XCircle } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Users, Heart, XCircle } from "lucide-react";
 import { ComplianceScore } from "@/components/shared/compliance-score";
 import { ExportButton } from "./export-button";
 
@@ -28,7 +28,6 @@ export default async function CompliancePage() {
   const { data: carers } = await supabase.from("carers").select("id").eq("org_id", orgId);
   const { data: carerDocs } = await supabase.from("documents").select("owner_id, document_types(name)").eq("org_id", orgId).eq("owner_type", "carer").is("deleted_at", null);
 
-  const today = new Date().toISOString().split("T")[0];
   const { count: overdueQualifications } = await supabase.from("qualifications").select("*", { count: "exact", head: true }).eq("org_id", orgId).eq("status", "expired");
 
   // Check: all carers have DBS checks

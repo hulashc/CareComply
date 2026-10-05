@@ -11,7 +11,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { Bell, FileText, AlertOctagon, Clock, UserCheck, ClipboardList, Loader2 } from "lucide-react";
+import { Bell, AlertOctagon, Clock, UserCheck, ClipboardList, Loader2 } from "lucide-react";
 import Link from "next/link";
 
 export function NotificationBell() {
