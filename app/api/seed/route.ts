@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/services/auth-guard";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-const supabase = createAdminClient();
-
 function now(offsetDays = 0): string {
   const d = new Date();
   d.setDate(d.getDate() + offsetDays);
@@ -22,6 +20,7 @@ function randomItem<T>(arr: T[]): T {
 
 export async function POST(_req: NextRequest) {
   try {
+    const supabase = createAdminClient();
     const admin = await requireAdmin();
     const orgId = admin.org_id;
     if (!orgId) {
