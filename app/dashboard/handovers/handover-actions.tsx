@@ -201,7 +201,7 @@ export function HandoverActions({
                     <Badge variant="outline" className="rounded-md text-[10px]">
                       {h.is_read ? "Read" : "Unread"}
                     </Badge>
-                    {h.mood && <Badge className="rounded-md text-[10px] bg-teal-100 text-teal-700">{h.mood}</Badge>}
+                    {h.mood && <Badge className="rounded-md text-[10px] bg-fuchsia-100 text-fuchsia-700">{h.mood}</Badge>}
                   </div>
                   <p className="text-sm">{h.note_text}</p>
                   <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">

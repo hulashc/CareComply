@@ -168,7 +168,7 @@ export default function AnalyticsContent(props: Props) {
   const moodColors: Record<string, string> = { happy: "bg-green-400", neutral: "bg-blue-400", concerned: "bg-amber-400", distressed: "bg-red-400" };
   const expiryColors: Record<string, string> = { "Expired": "bg-red-500", "This Week": "bg-amber-500", "This Month": "bg-yellow-400", "30+ Days": "bg-green-400" };
   const categoryColors: Record<string, string> = {
-    fall: "bg-orange-400", medication_error: "bg-red-400", safeguarding: "bg-teal-400",
+    fall: "bg-orange-400", medication_error: "bg-red-400", safeguarding: "bg-fuchsia-400",
     behaviour: "bg-yellow-400", missing_person: "bg-red-500", other: "bg-gray-400",
   };
 
@@ -476,7 +476,7 @@ export default function AnalyticsContent(props: Props) {
         </Card>
         <Card className="rounded-xl border border-border/50 shadow-card">
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-100"><Users className="h-5 w-5 text-teal-700" /></div>
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-fuchsia-100"><Users className="h-5 w-5 text-fuchsia-700" /></div>
             <div><p className="text-lg font-bold">{carers.filter(c => c.auth_id).length}/{totalCarers}</p><p className="text-xs text-muted-foreground">Carers with Login</p><p className="text-[10px] text-muted-foreground">{totalCarers - carers.filter(c => c.auth_id).length} manual only</p></div>
           </CardContent>
         </Card>

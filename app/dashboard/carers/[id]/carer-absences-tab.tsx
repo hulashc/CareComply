@@ -22,7 +22,7 @@ export function CarerAbsencesTab({ carerId }: { carerId: string }) {
 
   if (loading) return <div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>;
 
-  const typeColors: Record<string, string> = { sick_leave: "bg-red-100 text-red-700", holiday: "bg-blue-100 text-blue-700", training: "bg-teal-100 text-teal-700", other: "bg-gray-100 text-gray-700" };
+  const typeColors: Record<string, string> = { sick_leave: "bg-red-100 text-red-700", holiday: "bg-blue-100 text-blue-700", training: "bg-fuchsia-100 text-fuchsia-700", other: "bg-gray-100 text-gray-700" };
   const statusColors: Record<string, string> = { pending: "bg-amber-100 text-amber-700", approved: "bg-green-100 text-green-700", rejected: "bg-red-100 text-red-700" };
 
   return (

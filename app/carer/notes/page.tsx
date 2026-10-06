@@ -47,7 +47,7 @@ export default function CarerNotesPage() {
 
   if (done) return (
     <div className="flex flex-col items-center justify-center py-20 text-center">
-      <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-teal-500 mb-4">
+      <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-fuchsia-500 mb-4">
         <CheckCircle2 className="h-8 w-8 text-white" />
       </div>
       <h2 className="text-lg font-bold text-slate-900">Note Saved</h2>
@@ -62,7 +62,7 @@ export default function CarerNotesPage() {
           <ArrowLeft className="h-4 w-4 text-slate-600" />
         </Link>
         <div className="flex items-center gap-2">
-          <Pill className="h-5 w-5 text-teal-500" />
+          <Pill className="h-5 w-5 text-fuchsia-500" />
           <h1 className="text-lg font-bold text-slate-900">MAR / Care Note</h1>
         </div>
       </div>
@@ -142,7 +142,7 @@ export default function CarerNotesPage() {
             </div>
           </div>
 
-          <Button type="submit" disabled={submitting || !clientId} className="w-full h-10 rounded-lg bg-teal-500 hover:bg-teal-600 text-white font-bold text-sm active:scale-[0.98]">
+          <Button type="submit" disabled={submitting || !clientId} className="w-full h-10 rounded-lg bg-fuchsia-500 hover:bg-fuchsia-600 text-white font-bold text-sm active:scale-[0.98]">
             {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Sparkles className="h-4 w-4" /> Save Note</>}
           </Button>
         </form>

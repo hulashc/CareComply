@@ -69,7 +69,7 @@ const kloes = [
   {
     key: "Well-led",
     icon: BarChart3,
-    color: "bg-teal-50 text-teal-700 border-teal-200",
+    color: "bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200",
     regulation: "Regulation 17: Good governance",
     inspectorLooksFor: "CQC assess leadership, management, and governance. They look for: quality assurance systems, audit processes, staff training compliance, and how the registered manager oversees the service.",
     howCareComplyDelivers: [

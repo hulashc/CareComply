@@ -74,7 +74,10 @@ export default async function CarerDetailPage({
     <div className="space-y-6 max-w-3xl">
       <div className="flex items-center justify-between">
         <Link href="/dashboard/carers"><Button variant="ghost" size="sm" className="rounded-xl gap-2"><ArrowLeft className="h-4 w-4" />Back to Carers</Button></Link>
-        <DeleteButton apiUrl={`/api/carers/${id}`} entityName="carer" redirectTo="/dashboard/carers" />
+        <div className="flex items-center gap-2">
+          <Link href={`/dashboard/carers/${id}/edit`}><Button variant="outline" size="sm" className="rounded-xl">Edit</Button></Link>
+            <DeleteButton apiUrl={`/api/carers/${id}`} entityName="carer" redirectTo="/dashboard/carers" />
+        </div>
       </div>
 
       <Card className="rounded-2xl shadow-card border-0">

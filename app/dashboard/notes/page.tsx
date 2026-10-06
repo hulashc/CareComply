@@ -21,7 +21,7 @@ const moodColors: Record<string, string> = {
 
 const typeColors: Record<string, string> = {
   observation: "bg-blue-100 text-blue-700",
-  medication: "bg-teal-100 text-teal-700",
+  medication: "bg-fuchsia-100 text-fuchsia-700",
   meal: "bg-amber-100 text-amber-700",
   incident: "bg-red-100 text-red-700",
   general: "bg-gray-100 text-gray-700",

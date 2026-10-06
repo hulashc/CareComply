@@ -29,13 +29,13 @@ export default function CarerProfilePage() {
 
   if (loading) return (
     <div className="flex items-center justify-center py-20">
-      <Loader2 className="h-6 w-6 animate-spin text-teal-500" />
+      <Loader2 className="h-6 w-6 animate-spin text-fuchsia-500" />
     </div>
   );
 
   return (
     <div className="flex flex-col items-center py-8">
-      <div className="flex h-20 w-20 items-center justify-center rounded-full bg-teal-500 text-white text-2xl font-bold shadow-md mb-4">
+      <div className="flex h-20 w-20 items-center justify-center rounded-full bg-fuchsia-500 text-white text-2xl font-bold shadow-md mb-4">
         {carer?.full_name?.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase() ?? "?"}
       </div>
 

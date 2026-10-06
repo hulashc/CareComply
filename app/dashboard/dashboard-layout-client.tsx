@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -17,7 +18,7 @@ import {
   LayoutDashboard, Users, Heart, CalendarClock,
   Plus, Settings, MessageSquare, CalendarX,
   BarChart3, LogOut, Sun, Moon, CreditCard, X, CheckCircle2,
-  MapPin, ChevronLeft, ChevronRight, Shield,
+  MapPin, Shield, Menu, MoreHorizontal,
 } from "lucide-react";
 
 const primaryNav = [
@@ -30,13 +31,22 @@ const primaryNav = [
   { label: "Locations", href: "/dashboard/locations", icon: MapPin },
 ];
 
-const quickActions = [
-  { label: "Quick Add", href: "/dashboard/add", icon: Plus },
+const SECTION_TITLES: Record<string, string> = {
+  add: "Quick Add", "add-carer": "Add Carer", "add-document": "Add Document", "invite-carer": "Invite Carer",
+  cqc: "CQC Evidence", incidents: "Incidents", notes: "Care Notes", tasks: "Tasks",
+};
+function sectionTitle(pathname: string) {
+  const seg = pathname.split("/")[2];
+  if (!seg) return "Dashboard";
+  return SECTION_TITLES[seg] ?? seg.replace(/-/g, " ").replace(/^./, (c) => c.toUpperCase());
+}
+
+const moreNav = [
   { label: "Absences", href: "/dashboard/absences", icon: CalendarX },
   { label: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
 ];
 
-function UserMenu({ collapsed }: { collapsed: boolean }) {
+function UserMenu() {
   const { theme, setTheme } = useTheme();
   const router = useRouter();
   const [initials, setInitials] = useState("?");
@@ -65,22 +75,17 @@ function UserMenu({ collapsed }: { collapsed: boolean }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className={cn(
-          "flex items-center gap-3 rounded-xl p-2 text-left transition-colors hover:bg-white/10 w-full",
-          collapsed && "justify-center"
-        )} aria-label="Open user menu">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 via-teal-500 to-emerald-500 text-sm font-bold text-white shadow-sm shadow-teal-500/20">
+        <button className="flex items-center gap-3 rounded-xl p-1.5 text-left transition-colors hover:bg-white/10" aria-label="Open user menu">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-pink-500 to-fuchsia-600 text-sm font-bold text-white shadow-sm">
             {initials}
           </div>
-          {!collapsed && (
-            <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium text-white truncate">{name}</p>
-              <p className="text-[11px] text-white/50">Admin</p>
-            </div>
-          )}
+          <div className="hidden min-w-0 2xl:block">
+            <p className="max-w-[140px] truncate text-sm font-medium text-white">{name}</p>
+            <p className="text-[11px] text-white/60">Admin</p>
+          </div>
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" side={collapsed ? "right" : "top"} className="w-48 rounded-xl p-2">
+      <DropdownMenuContent align="end" className="w-48 rounded-xl p-2">
         <DropdownMenuLabel className="text-[10px] font-semibold uppercase text-muted-foreground px-3 py-1.5">Account</DropdownMenuLabel>
         <DropdownMenuItem asChild className="rounded-lg"><Link href="/dashboard/settings" className="flex items-center gap-2.5 px-3 py-2 text-sm"><Settings className="h-4 w-4" />Settings</Link></DropdownMenuItem>
         <DropdownMenuItem className="rounded-lg flex items-center gap-2.5 px-3 py-2 text-sm cursor-pointer" onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
@@ -98,15 +103,20 @@ export default function DashboardLayoutClient({ children }: { children: React.Re
   const pathname = usePathname();
   const isActive = (href: string) => pathname === href || (href !== "/dashboard" && pathname.startsWith(href));
   const sub = useSubscription();
-  const [collapsed, setCollapsed] = useState(() => {
-    if (typeof window !== "undefined") return localStorage.getItem("sidebar_collapsed") === "true";
-    return false;
-  });
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    localStorage.setItem("sidebar_collapsed", String(collapsed));
-  }, [collapsed]);
+    setMobileOpen(false);
+  }, [pathname]);
+
+  // The header is transparent over the purple band, then turns solid once the page scrolls.
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const [welcomeDismissed, setWelcomeDismissed] = useState(false);
   const searchParams = useSearchParams();
@@ -118,110 +128,97 @@ export default function DashboardLayoutClient({ children }: { children: React.Re
     if (typeof window !== "undefined") sessionStorage.removeItem("just_subscribed");
   }
 
-  const sidebarWidth = collapsed ? "w-[68px]" : "w-[240px]";
+  const tabClass = (active: boolean) => cn(
+    "flex items-center gap-2 rounded-md px-2.5 py-2 text-sm font-medium whitespace-nowrap transition-all",
+    active
+      ? "bg-white/15 text-white shadow-sm border border-white/25"
+      : "border border-transparent text-white/80 hover:text-white hover:bg-white/10"
+  );
+  const moreActive = moreNav.some((i) => isActive(i.href));
 
   return (
-    <div className="flex min-h-screen bg-background">
-      {/* Mobile overlay */}
-      {mobileOpen && (
-        <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden" onClick={() => setMobileOpen(false)} />
-      )}
+    <div className="relative flex min-h-screen flex-col bg-background">
+      {/* Purple hero band behind the header and page title */}
+      <div className="hero-bg absolute inset-x-0 top-0 h-80 overflow-hidden" aria-hidden="true">
+        <Image src="/images/hero-care.jpg" alt="" fill priority sizes="100vw" className="object-cover object-[50%_32%] opacity-60" />
+        {/* Purple wash: strongest behind the title on the left, lets the photo glow through on the right. */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[hsl(var(--hero-from))]/95 via-[hsl(var(--hero-mid))]/60 to-[hsl(var(--hero-to))]/25" />
+        {/* Soft fade into the page below. */}
+        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/20 to-transparent" />
+      </div>
 
-      {/* Sidebar */}
-      <aside className={cn(
-        "fixed inset-y-0 left-0 z-50 flex flex-col text-sidebar-foreground transition-all duration-300 shadow-sidebar bg-gradient-to-b from-[#2f6f6e] via-[#2b6766] to-[#245857]",
-        sidebarWidth,
-        mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+      {/* Top navigation */}
+      <header className={cn(
+        "sticky top-0 z-50 text-white transition-colors duration-200",
+        scrolled ? "bg-[hsl(var(--hero-from))]/95 shadow-sidebar backdrop-blur-md" : "bg-transparent"
       )}>
-        {/* Brand */}
-        <div className={cn("flex items-center gap-3 border-b border-white/10 px-4 py-4", collapsed && "justify-center px-2")}>
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-base font-bold text-teal-700 shadow-lg shadow-black/10">
-            C
+        <div className="flex h-16 items-center gap-3 px-4 sm:px-6 lg:px-8">
+          <Link href="/dashboard" className="flex shrink-0 items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-md bg-white text-base font-bold text-primary shadow-card">C</div>
+            <span className="text-lg font-bold tracking-tight">CareComply</span>
+          </Link>
+
+          {/* Tabs (large screens) */}
+          <nav className="ml-4 hidden min-w-0 flex-1 items-center gap-1 xl:flex" aria-label="Main">
+            {primaryNav.map((item) => (
+              <Link key={item.href} href={item.href} className={tabClass(isActive(item.href))} aria-current={isActive(item.href) ? "page" : undefined}>
+                <item.icon className="h-4 w-4 shrink-0" />
+                <span>{item.label}</span>
+              </Link>
+            ))}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className={tabClass(moreActive)} aria-label="More pages">
+                  <MoreHorizontal className="h-4 w-4" />
+                  <span>More</span>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-44 rounded-xl p-2">
+                {moreNav.map((item) => (
+                  <DropdownMenuItem key={item.href} asChild className="rounded-lg">
+                    <Link href={item.href} className="flex items-center gap-2.5 px-3 py-2 text-sm"><item.icon className="h-4 w-4" />{item.label}</Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </nav>
+
+          <div className="ml-auto flex items-center gap-2">
+            <Link href="/dashboard/add" className="hidden sm:block">
+              <Button size="sm" className="rounded-full bg-white text-primary shadow-button hover:bg-white/90 gap-1.5">
+                <Plus className="h-4 w-4" />Quick Add
+              </Button>
+            </Link>
+            <NotificationBell />
+            <UserMenu />
+            <button
+              onClick={() => setMobileOpen((o) => !o)}
+              className="rounded-lg p-2 hover:bg-white/10 transition-colors xl:hidden"
+              aria-label={mobileOpen ? "Close menu" : "Open menu"}
+              aria-expanded={mobileOpen}
+            >
+              {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
           </div>
-          {!collapsed && (
-            <span className="text-lg font-bold tracking-tight text-white">CareComply</span>
-          )}
         </div>
 
-        {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1 scrollbar-thin">
-          {primaryNav.map((item) => {
-            const active = isActive(item.href);
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setMobileOpen(false)}
-                className={cn(
-                  "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all",
-                  collapsed && "justify-center px-2",
-                  active
-                    ? "bg-white/15 text-white shadow-sm border border-white/25"
-                    : "text-white/80 hover:text-white hover:bg-white/10"
-                )}
-                title={collapsed ? item.label : undefined}
-              >
-                <item.icon className="h-4.5 w-4.5 shrink-0" />
-                {!collapsed && <span>{item.label}</span>}
-              </Link>
-            );
-          })}
-
-          {!collapsed && (
-            <>
-              <div className="pt-4 pb-2">
-                <p className="px-3 text-[10px] font-semibold uppercase tracking-widest text-white/65">Quick Actions</p>
-              </div>
-              {quickActions.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setMobileOpen(false)}
-                  className={cn(
-                    "flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-white/75 transition-all hover:text-white hover:bg-white/10"
-                  )}
-                >
+        {/* Dropdown panel (small screens) */}
+        {mobileOpen && (
+          <nav className="border-t border-white/10 px-4 pb-4 pt-2 xl:hidden" aria-label="Main">
+            <div className="grid gap-1 sm:grid-cols-2">
+              {[...primaryNav, { label: "Quick Add", href: "/dashboard/add", icon: Plus }, ...moreNav].map((item) => (
+                <Link key={item.href} href={item.href} onClick={() => setMobileOpen(false)} className={tabClass(isActive(item.href))}>
                   <item.icon className="h-4 w-4 shrink-0" />
                   <span>{item.label}</span>
                 </Link>
               ))}
-            </>
-          )}
-        </nav>
-
-        {/* Collapse toggle (desktop only) */}
-        <div className="hidden lg:flex border-t border-white/10 px-3 py-2">
-          <button
-            onClick={() => setCollapsed(!collapsed)}
-            className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm text-white/75 transition-all hover:text-white hover:bg-white/10"
-            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          >
-            {collapsed ? <ChevronRight className="h-4 w-4" /> : <><ChevronLeft className="h-4 w-4" /><span>Collapse</span></>}
-          </button>
-        </div>
-
-        {/* User */}
-        <div className={cn("border-t border-white/10 p-3", collapsed && "px-2")}>
-          <UserMenu collapsed={collapsed} />
-        </div>
-      </aside>
+            </div>
+          </nav>
+        )}
+      </header>
 
       {/* Main content */}
-      <div className={cn("flex-1 flex flex-col transition-all duration-300 lg:ml-[240px]", collapsed && "lg:ml-[68px]")}>
-        {/* Mobile top bar */}
-        <header className="sticky top-0 z-40 flex items-center gap-4 border-b bg-card/80 backdrop-blur-xl px-4 py-3 lg:hidden">
-          <button onClick={() => setMobileOpen(true)} className="rounded-lg p-2 hover:bg-muted transition-colors" aria-label="Open sidebar menu">
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
-          </button>
-          <Link href="/dashboard" className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-accent text-xs font-bold text-white">C</div>
-            <span className="font-bold tracking-tight">CareComply</span>
-          </Link>
-          <div className="ml-auto flex items-center gap-2">
-            <NotificationBell />
-          </div>
-        </header>
-
+      <div className="flex flex-1 flex-col">
         {/* Subscription banners */}
         {showWelcome && sub.seatsPurchased > 0 && (
           <WelcomeChecklist seatsPurchased={sub.seatsPurchased} carerCount={sub.carerCount} onDismiss={dismissWelcome} />
@@ -262,9 +259,14 @@ export default function DashboardLayoutClient({ children }: { children: React.Re
           </div>
         )}
 
-        {/* Page content */}
-        <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-8 gradient-mesh">
-          <div key={pathname} className="animate-fade-up">{children}</div>
+        {/* Page title on the purple band */}
+        <div className="relative z-10 mx-auto w-full max-w-7xl px-4 pb-28 pt-6 text-white sm:px-6 lg:px-8">
+          <h1 className="text-3xl font-bold tracking-tight">{sectionTitle(pathname)}</h1>
+        </div>
+
+        {/* Page content: white elevated card overlapping the band */}
+        <main className="relative z-10 mx-auto -mt-20 w-full max-w-7xl flex-1 px-4 pb-10 sm:px-6 lg:px-8">
+          <div key={pathname} className="material-card min-h-[50vh] animate-fade-up p-4 sm:p-6 lg:p-8">{children}</div>
         </main>
       </div>
 

@@ -51,12 +51,12 @@ export default async function CarerHomePage() {
 
       <div className="grid grid-cols-3 gap-2.5">
         <div className="rounded-xl bg-white border border-slate-200 p-3 text-center shadow-sm">
-          <Clock className="h-5 w-5 text-teal-500 mx-auto mb-1" />
+          <Clock className="h-5 w-5 text-fuchsia-500 mx-auto mb-1" />
           <p className="text-lg font-bold text-slate-900">{shifts.length}</p>
           <p className="text-[10px] font-medium text-slate-500">Shifts</p>
         </div>
         <div className="rounded-xl bg-white border border-slate-200 p-3 text-center shadow-sm">
-          <Users className="h-5 w-5 text-teal-500 mx-auto mb-1" />
+          <Users className="h-5 w-5 text-fuchsia-500 mx-auto mb-1" />
           <p className="text-lg font-bold text-slate-900">{clientNames.length}</p>
           <p className="text-[10px] font-medium text-slate-500">Clients</p>
         </div>
@@ -70,11 +70,11 @@ export default async function CarerHomePage() {
       <div className="rounded-xl bg-white border border-slate-200 p-4 shadow-sm">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <CalendarClock className="h-4 w-4 text-teal-500" />
+            <CalendarClock className="h-4 w-4 text-fuchsia-500" />
             <h2 className="text-sm font-bold text-slate-800">Today&apos;s Roster</h2>
           </div>
           {shifts.length > 0 && (
-            <Badge className="rounded-full bg-teal-50 text-teal-600 border-0 text-[10px] font-semibold">{shifts.length} visits</Badge>
+            <Badge className="rounded-full bg-fuchsia-50 text-fuchsia-600 border-0 text-[10px] font-semibold">{shifts.length} visits</Badge>
           )}
         </div>
         {shifts.length === 0 ? (
@@ -92,8 +92,8 @@ export default async function CarerHomePage() {
               return (
                 <div key={s.id} className="space-y-1.5">
                   <Link href={`/carer/clients/${s.client_id}`} className="block">
-                    <div className="flex items-center gap-3 rounded-lg border border-slate-100 bg-slate-50/50 p-3 hover:border-teal-200 hover:bg-teal-50/30 transition-colors active:scale-[0.99]">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-teal-500 text-white text-xs font-bold">
+                    <div className="flex items-center gap-3 rounded-lg border border-slate-100 bg-slate-50/50 p-3 hover:border-fuchsia-200 hover:bg-fuchsia-50/30 transition-colors active:scale-[0.99]">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-fuchsia-500 text-white text-xs font-bold">
                         {s.clients?.full_name?.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase() ?? "?"}
                       </div>
                       <div className="min-w-0 flex-1">
@@ -168,7 +168,7 @@ export default async function CarerHomePage() {
               </Link>
             ))}
             {tasks.length > 5 && (
-              <Link href="/carer/tasks" className="block text-center text-xs font-semibold text-teal-600 py-1.5">
+              <Link href="/carer/tasks" className="block text-center text-xs font-semibold text-fuchsia-600 py-1.5">
                 +{tasks.length - 5} more tasks
               </Link>
             )}
@@ -178,16 +178,16 @@ export default async function CarerHomePage() {
 
       <div className="grid grid-cols-3 gap-2.5">
         <Link href="/carer/notes" className="block">
-          <div className="rounded-xl bg-white border border-slate-200 p-3.5 text-center shadow-sm hover:border-teal-200 hover:shadow-md transition-all active:scale-[0.97]">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-teal-500 mx-auto mb-1.5">
+          <div className="rounded-xl bg-white border border-slate-200 p-3.5 text-center shadow-sm hover:border-fuchsia-200 hover:shadow-md transition-all active:scale-[0.97]">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-fuchsia-500 mx-auto mb-1.5">
               <Pill className="h-5 w-5 text-white" />
             </div>
             <span className="text-xs font-bold text-slate-700">MAR Notes</span>
           </div>
         </Link>
         <Link href="/carer/handovers" className="block">
-          <div className="rounded-xl bg-white border border-slate-200 p-3.5 text-center shadow-sm hover:border-teal-200 hover:shadow-md transition-all active:scale-[0.97]">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-teal-500 mx-auto mb-1.5">
+          <div className="rounded-xl bg-white border border-slate-200 p-3.5 text-center shadow-sm hover:border-fuchsia-200 hover:shadow-md transition-all active:scale-[0.97]">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-fuchsia-500 mx-auto mb-1.5">
               <MessageSquare className="h-5 w-5 text-white" />
             </div>
             <span className="text-xs font-bold text-slate-700">Handover</span>

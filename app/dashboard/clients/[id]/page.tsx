@@ -43,7 +43,7 @@ const CLIENT_TABS = [
 const moodEmoji: Record<string, string> = { happy: "😊", neutral: "😐", concerned: "😟", distressed: "😢" };
 const priorityColors: Record<string, string> = { low: "bg-blue-100 text-blue-700", medium: "bg-amber-100 text-amber-700", high: "bg-red-100 text-red-700" };
 const medStatusColors: Record<string, string> = { active: "bg-green-100 text-green-700", paused: "bg-amber-100 text-amber-700", stopped: "bg-red-100 text-red-700" };
-const assessmentCategoryColors: Record<string, string> = { initial: "bg-blue-100 text-blue-700", review: "bg-teal-100 text-teal-700", risk: "bg-red-100 text-red-700", care: "bg-green-100 text-green-700" };
+const assessmentCategoryColors: Record<string, string> = { initial: "bg-blue-100 text-blue-700", review: "bg-fuchsia-100 text-fuchsia-700", risk: "bg-red-100 text-red-700", care: "bg-green-100 text-green-700" };
 
 export default async function ClientDetailPage({
   params, searchParams,
@@ -81,7 +81,10 @@ export default async function ClientDetailPage({
     <div className="space-y-6 max-w-4xl">
       <div className="flex items-center justify-between">
         <Link href="/dashboard/clients"><Button variant="ghost" size="sm" className="rounded-xl gap-2"><ArrowLeft className="h-4 w-4" />Back to Clients</Button></Link>
-        <DeleteButton apiUrl={`/api/clients/${id}`} entityName="client" redirectTo="/dashboard/clients" />
+        <div className="flex items-center gap-2">
+          <Link href={`/dashboard/clients/${id}/edit`}><Button variant="outline" size="sm" className="rounded-xl">Edit</Button></Link>
+            <DeleteButton apiUrl={`/api/clients/${id}`} entityName="client" redirectTo="/dashboard/clients" />
+        </div>
       </div>
 
       <Card className="rounded-2xl shadow-card border-0">

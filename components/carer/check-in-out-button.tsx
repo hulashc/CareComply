@@ -44,8 +44,8 @@ export function CheckInOutButton({ shiftId, action }: { shiftId: string; action:
         disabled={busy}
         className={
           isIn
-            ? "flex w-full items-center justify-center gap-1.5 rounded-lg bg-teal-500 py-2 text-xs font-bold text-white transition-colors hover:bg-teal-600 disabled:opacity-60"
-            : "flex w-full items-center justify-center gap-1.5 rounded-lg bg-teal-600 py-2 text-xs font-bold text-white transition-colors hover:bg-teal-700 disabled:opacity-60"
+            ? "flex w-full items-center justify-center gap-1.5 rounded-lg bg-fuchsia-500 py-2 text-xs font-bold text-white transition-colors hover:bg-fuchsia-600 disabled:opacity-60"
+            : "flex w-full items-center justify-center gap-1.5 rounded-lg bg-fuchsia-600 py-2 text-xs font-bold text-white transition-colors hover:bg-fuchsia-700 disabled:opacity-60"
         }
       >
         <Icon aria-hidden className="h-3.5 w-3.5" />

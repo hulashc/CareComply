@@ -68,7 +68,7 @@ export default function CarerHandoversPage() {
 
   if (loading) return (
     <div className="flex items-center justify-center py-20">
-      <Loader2 className="h-6 w-6 animate-spin text-teal-500" />
+      <Loader2 className="h-6 w-6 animate-spin text-fuchsia-500" />
     </div>
   );
 
@@ -84,13 +84,13 @@ export default function CarerHandoversPage() {
             {unreadCount > 0 && <p className="text-xs font-semibold text-amber-600">{unreadCount} unread</p>}
           </div>
         </div>
-        <Button size="sm" className="rounded-lg bg-teal-500 hover:bg-teal-600 text-white font-semibold text-xs h-8 gap-1" onClick={() => setShowForm(!showForm)}>
+        <Button size="sm" className="rounded-lg bg-fuchsia-500 hover:bg-fuchsia-600 text-white font-semibold text-xs h-8 gap-1" onClick={() => setShowForm(!showForm)}>
           {showForm ? "Cancel" : <><Plus className="h-3.5 w-3.5" /> New</>}
         </Button>
       </div>
 
       {showForm && (
-        <div className="rounded-xl bg-white border border-slate-200 border-l-4 border-l-teal-400 p-4 shadow-sm">
+        <div className="rounded-xl bg-white border border-slate-200 border-l-4 border-l-fuchsia-400 p-4 shadow-sm">
           <form onSubmit={handleSubmit} className="space-y-3">
             <Select value={clientId} onValueChange={setClientId}>
               <SelectTrigger className="rounded-lg border-slate-200 bg-white h-10">
@@ -116,7 +116,7 @@ export default function CarerHandoversPage() {
               </div>
             </div>
             <Input value={tasksRemaining} onChange={e => setTasksRemaining(e.target.value)} placeholder="Tasks remaining" className="rounded-lg border-slate-200 bg-white h-9" />
-            <Button type="submit" disabled={submitting || !clientId} className="w-full h-9 rounded-lg bg-teal-500 hover:bg-teal-600 text-white font-bold text-sm active:scale-[0.98]">
+            <Button type="submit" disabled={submitting || !clientId} className="w-full h-9 rounded-lg bg-fuchsia-500 hover:bg-fuchsia-600 text-white font-bold text-sm active:scale-[0.98]">
               {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Send className="h-4 w-4" /> Submit</>}
             </Button>
           </form>

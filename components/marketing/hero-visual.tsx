@@ -20,7 +20,7 @@ export function HeroVisual() {
               <circle cx="28" cy="28" r="24" fill="none" stroke="hsl(230 15% 91%)" strokeWidth="6" />
               <circle
                 cx="28" cy="28" r="24" fill="none"
-                stroke="hsl(160 60% 40%)" strokeWidth="6" strokeLinecap="round"
+                stroke="hsl(var(--primary))" strokeWidth="6" strokeLinecap="round"
                 strokeDasharray="150.8" strokeDashoffset="14"
                 transform="rotate(-90 28 28)"
               />

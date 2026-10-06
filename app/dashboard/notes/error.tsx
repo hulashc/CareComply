@@ -7,7 +7,7 @@ import { AlertTriangle } from "lucide-react";
 export default function NotesError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   return (
     <div className="space-y-6">
-      <Card className="rounded-2xl border-0 shadow-card" style={{ borderLeft: "4px solid hsl(189 62% 38%)" }}>
+      <Card className="rounded-2xl border-0 shadow-card" style={{ borderLeft: "4px solid hsl(var(--secondary))" }}>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-cyan-500 to-emerald-500">

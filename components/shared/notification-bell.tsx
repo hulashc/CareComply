@@ -114,8 +114,8 @@ export function NotificationBell() {
         {overdueReviews > 0 && (
           <DropdownMenuItem asChild className="rounded-lg cursor-pointer">
             <Link href="/dashboard/clients" className="flex items-center gap-3 px-3 py-2.5">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-teal-100">
-                <ClipboardList className="h-4 w-4 text-teal-700" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-fuchsia-100">
+                <ClipboardList className="h-4 w-4 text-fuchsia-700" />
               </div>
               <div>
                 <p className="text-sm font-medium">{overdueReviews} overdue review{overdueReviews !== 1 ? "s" : ""}</p>

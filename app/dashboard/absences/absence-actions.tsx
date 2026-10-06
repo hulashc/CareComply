@@ -22,7 +22,7 @@ const ABSENCE_TYPES = [
 const typeColors: Record<string, string> = {
   sick_leave: "bg-red-100 text-red-700",
   holiday: "bg-blue-100 text-blue-700",
-  training: "bg-teal-100 text-teal-700",
+  training: "bg-fuchsia-100 text-fuchsia-700",
   other: "bg-gray-100 text-gray-700",
 };
 

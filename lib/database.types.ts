@@ -110,6 +110,47 @@ export type Database = {
           },
         ]
       }
+      analytics_events: {
+        Row: {
+          actor_id: string | null
+          created_at: string
+          entity_id: string | null
+          entity_type: string | null
+          event_type: string
+          id: string
+          metadata: Json | null
+          org_id: string | null
+        }
+        Insert: {
+          actor_id?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          event_type: string
+          id?: string
+          metadata?: Json | null
+          org_id?: string | null
+        }
+        Update: {
+          actor_id?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+          org_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "analytics_events_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       application_documents: {
         Row: {
           application_id: string
@@ -169,8 +210,8 @@ export type Database = {
           has_convictions_to_disclose: boolean | null
           has_driving_licence: boolean | null
           id: string
-          invite_token: string
           invite_expires_at: string | null
+          invite_token: string
           invited_at: string
           is_sponsored_visa: boolean | null
           is_uk_eea_citizen: boolean | null
@@ -215,8 +256,8 @@ export type Database = {
           has_convictions_to_disclose?: boolean | null
           has_driving_licence?: boolean | null
           id?: string
-          invite_token: string
           invite_expires_at?: string | null
+          invite_token: string
           invited_at?: string
           is_sponsored_visa?: boolean | null
           is_uk_eea_citizen?: boolean | null
@@ -261,6 +302,7 @@ export type Database = {
           has_convictions_to_disclose?: boolean | null
           has_driving_licence?: boolean | null
           id?: string
+          invite_expires_at?: string | null
           invite_token?: string
           invited_at?: string
           is_sponsored_visa?: boolean | null
@@ -545,54 +587,225 @@ export type Database = {
           },
         ]
       }
+      carer_contacts: {
+        Row: {
+          carer_id: string
+          created_at: string
+          id: string
+          is_primary: boolean
+          name: string
+          org_id: string
+          phone: string
+          relationship: string | null
+        }
+        Insert: {
+          carer_id: string
+          created_at?: string
+          id?: string
+          is_primary?: boolean
+          name: string
+          org_id: string
+          phone: string
+          relationship?: string | null
+        }
+        Update: {
+          carer_id?: string
+          created_at?: string
+          id?: string
+          is_primary?: boolean
+          name?: string
+          org_id?: string
+          phone?: string
+          relationship?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "carer_contacts_carer_id_fkey"
+            columns: ["carer_id"]
+            isOneToOne: false
+            referencedRelation: "carers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "carer_contacts_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      carer_references: {
+        Row: {
+          carer_id: string
+          created_at: string
+          email: string | null
+          id: string
+          name: string
+          org_id: string
+          organisation: string | null
+          phone: string | null
+          received: boolean
+          relationship: string | null
+          verified: boolean
+        }
+        Insert: {
+          carer_id: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          name: string
+          org_id: string
+          organisation?: string | null
+          phone?: string | null
+          received?: boolean
+          relationship?: string | null
+          verified?: boolean
+        }
+        Update: {
+          carer_id?: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          name?: string
+          org_id?: string
+          organisation?: string | null
+          phone?: string | null
+          received?: boolean
+          relationship?: string | null
+          verified?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "carer_references_carer_id_fkey"
+            columns: ["carer_id"]
+            isOneToOne: false
+            referencedRelation: "carers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "carer_references_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       carers: {
         Row: {
+          address: string | null
           auth_id: string | null
           availability: Json | null
+          bank_account_enc: string | null
+          bank_account_name: string | null
+          bank_sort_code_enc: string | null
+          contract_hours: number | null
           created_at: string | null
+          dbs_issue_date: string | null
+          dbs_level: string | null
+          dbs_number: string | null
+          dbs_update_service: boolean
+          dob: string | null
+          driving_licence: boolean
           email: string | null
+          employment_type: string | null
           full_name: string
+          gender: string | null
+          has_vehicle: boolean
+          health_declaration: string | null
           id: string
           is_available: boolean | null
           location_id: string | null
+          ni_number_enc: string | null
           notes: string | null
           org_id: string | null
+          pay_grade: string | null
           phone: string | null
+          postcode: string | null
+          probation_end: string | null
+          right_to_work_expiry: string | null
+          right_to_work_status: string | null
           role: string
           start_date: string | null
           status: string | null
+          vehicle_insured: boolean
         }
         Insert: {
+          address?: string | null
           auth_id?: string | null
           availability?: Json | null
+          bank_account_enc?: string | null
+          bank_account_name?: string | null
+          bank_sort_code_enc?: string | null
+          contract_hours?: number | null
           created_at?: string | null
+          dbs_issue_date?: string | null
+          dbs_level?: string | null
+          dbs_number?: string | null
+          dbs_update_service?: boolean
+          dob?: string | null
+          driving_licence?: boolean
           email?: string | null
+          employment_type?: string | null
           full_name: string
+          gender?: string | null
+          has_vehicle?: boolean
+          health_declaration?: string | null
           id?: string
           is_available?: boolean | null
           location_id?: string | null
+          ni_number_enc?: string | null
           notes?: string | null
           org_id?: string | null
+          pay_grade?: string | null
           phone?: string | null
+          postcode?: string | null
+          probation_end?: string | null
+          right_to_work_expiry?: string | null
+          right_to_work_status?: string | null
           role?: string
           start_date?: string | null
           status?: string | null
+          vehicle_insured?: boolean
         }
         Update: {
+          address?: string | null
           auth_id?: string | null
           availability?: Json | null
+          bank_account_enc?: string | null
+          bank_account_name?: string | null
+          bank_sort_code_enc?: string | null
+          contract_hours?: number | null
           created_at?: string | null
+          dbs_issue_date?: string | null
+          dbs_level?: string | null
+          dbs_number?: string | null
+          dbs_update_service?: boolean
+          dob?: string | null
+          driving_licence?: boolean
           email?: string | null
+          employment_type?: string | null
           full_name?: string
+          gender?: string | null
+          has_vehicle?: boolean
+          health_declaration?: string | null
           id?: string
           is_available?: boolean | null
           location_id?: string | null
+          ni_number_enc?: string | null
           notes?: string | null
           org_id?: string | null
+          pay_grade?: string | null
           phone?: string | null
+          postcode?: string | null
+          probation_end?: string | null
+          right_to_work_expiry?: string | null
+          right_to_work_status?: string | null
           role?: string
           start_date?: string | null
           status?: string | null
+          vehicle_insured?: boolean
         }
         Relationships: [
           {
@@ -611,47 +824,207 @@ export type Database = {
           },
         ]
       }
-      clients: {
+      client_contacts: {
         Row: {
           address: string | null
-          care_notes: string | null
-          created_at: string | null
-          dob: string | null
-          emergency_contact_name: string | null
-          emergency_contact_phone: string | null
-          full_name: string
+          client_id: string
+          created_at: string
+          email: string | null
           id: string
-          location_id: string | null
-          org_id: string | null
-          photo_url: string | null
+          is_primary: boolean
+          name: string
+          org_id: string
+          phone: string | null
+          relationship: string | null
+          type: string
         }
         Insert: {
           address?: string | null
-          care_notes?: string | null
-          created_at?: string | null
-          dob?: string | null
-          emergency_contact_name?: string | null
-          emergency_contact_phone?: string | null
-          full_name: string
+          client_id: string
+          created_at?: string
+          email?: string | null
           id?: string
-          location_id?: string | null
-          org_id?: string | null
-          photo_url?: string | null
+          is_primary?: boolean
+          name: string
+          org_id: string
+          phone?: string | null
+          relationship?: string | null
+          type: string
         }
         Update: {
           address?: string | null
+          client_id?: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_primary?: boolean
+          name?: string
+          org_id?: string
+          phone?: string | null
+          relationship?: string | null
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_contacts_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_contacts_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      clients: {
+        Row: {
+          access_instructions: string | null
+          address: string | null
+          advocate: string | null
+          allergies: string[]
+          capacity_status: string | null
+          care_notes: string | null
+          communication_needs: string | null
+          conditions: string[]
+          consent_to_care: boolean
+          consent_to_share: boolean
+          created_at: string | null
+          dietary_needs: string | null
+          dislikes: string | null
+          dnacpr: boolean
+          dob: string | null
+          emergency_contact_name: string | null
+          emergency_contact_phone: string | null
+          ethnicity: string | null
+          full_name: string
+          funding_ref: string | null
+          funding_source: string | null
+          gender: string | null
+          id: string
+          interpreter_needed: boolean
+          key_worker_id: string | null
+          life_history: string | null
+          likes: string | null
+          local_authority: string | null
+          location_id: string | null
+          lpa_holder: string | null
+          mobility_level: string | null
+          nhs_number: string | null
+          org_id: string | null
+          phone: string | null
+          photo_url: string | null
+          postcode: string | null
+          preferred_name: string | null
+          primary_language: string | null
+          pronouns: string | null
+          religion: string | null
+          risk_flags: Json
+          status: string
+          title: string | null
+        }
+        Insert: {
+          access_instructions?: string | null
+          address?: string | null
+          advocate?: string | null
+          allergies?: string[]
+          capacity_status?: string | null
           care_notes?: string | null
+          communication_needs?: string | null
+          conditions?: string[]
+          consent_to_care?: boolean
+          consent_to_share?: boolean
           created_at?: string | null
+          dietary_needs?: string | null
+          dislikes?: string | null
+          dnacpr?: boolean
           dob?: string | null
           emergency_contact_name?: string | null
           emergency_contact_phone?: string | null
-          full_name?: string
+          ethnicity?: string | null
+          full_name: string
+          funding_ref?: string | null
+          funding_source?: string | null
+          gender?: string | null
           id?: string
+          interpreter_needed?: boolean
+          key_worker_id?: string | null
+          life_history?: string | null
+          likes?: string | null
+          local_authority?: string | null
           location_id?: string | null
+          lpa_holder?: string | null
+          mobility_level?: string | null
+          nhs_number?: string | null
           org_id?: string | null
+          phone?: string | null
           photo_url?: string | null
+          postcode?: string | null
+          preferred_name?: string | null
+          primary_language?: string | null
+          pronouns?: string | null
+          religion?: string | null
+          risk_flags?: Json
+          status?: string
+          title?: string | null
+        }
+        Update: {
+          access_instructions?: string | null
+          address?: string | null
+          advocate?: string | null
+          allergies?: string[]
+          capacity_status?: string | null
+          care_notes?: string | null
+          communication_needs?: string | null
+          conditions?: string[]
+          consent_to_care?: boolean
+          consent_to_share?: boolean
+          created_at?: string | null
+          dietary_needs?: string | null
+          dislikes?: string | null
+          dnacpr?: boolean
+          dob?: string | null
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          ethnicity?: string | null
+          full_name?: string
+          funding_ref?: string | null
+          funding_source?: string | null
+          gender?: string | null
+          id?: string
+          interpreter_needed?: boolean
+          key_worker_id?: string | null
+          life_history?: string | null
+          likes?: string | null
+          local_authority?: string | null
+          location_id?: string | null
+          lpa_holder?: string | null
+          mobility_level?: string | null
+          nhs_number?: string | null
+          org_id?: string | null
+          phone?: string | null
+          photo_url?: string | null
+          postcode?: string | null
+          preferred_name?: string | null
+          primary_language?: string | null
+          pronouns?: string | null
+          religion?: string | null
+          risk_flags?: Json
+          status?: string
+          title?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "clients_key_worker_id_fkey"
+            columns: ["key_worker_id"]
+            isOneToOne: false
+            referencedRelation: "carers"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "clients_location_id_fkey"
             columns: ["location_id"]
@@ -661,6 +1034,59 @@ export type Database = {
           },
           {
             foreignKeyName: "clients_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      daily_metrics: {
+        Row: {
+          compliance_score: number | null
+          compliant_carers: number | null
+          created_at: string
+          documents_compliant: number | null
+          documents_expired: number | null
+          documents_expiring: number | null
+          id: string
+          metric_date: string
+          open_incidents: number | null
+          org_id: string
+          total_carers: number | null
+          total_clients: number | null
+        }
+        Insert: {
+          compliance_score?: number | null
+          compliant_carers?: number | null
+          created_at?: string
+          documents_compliant?: number | null
+          documents_expired?: number | null
+          documents_expiring?: number | null
+          id?: string
+          metric_date: string
+          open_incidents?: number | null
+          org_id: string
+          total_carers?: number | null
+          total_clients?: number | null
+        }
+        Update: {
+          compliance_score?: number | null
+          compliant_carers?: number | null
+          created_at?: string
+          documents_compliant?: number | null
+          documents_expired?: number | null
+          documents_expiring?: number | null
+          id?: string
+          metric_date?: string
+          open_incidents?: number | null
+          org_id?: string
+          total_carers?: number | null
+          total_clients?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "daily_metrics_org_id_fkey"
             columns: ["org_id"]
             isOneToOne: false
             referencedRelation: "organizations"
@@ -753,6 +1179,13 @@ export type Database = {
           verified?: boolean | null
         }
         Relationships: [
+          {
+            foreignKeyName: "documents_deleted_by_fkey"
+            columns: ["deleted_by"]
+            isOneToOne: false
+            referencedRelation: "admins"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "documents_document_type_id_fkey"
             columns: ["document_type_id"]
@@ -921,54 +1354,31 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "handover_notes_shift_id_fkey"
+            columns: ["shift_id"]
+            isOneToOne: false
+            referencedRelation: "v_carer_shift_conflicts"
+            referencedColumns: ["shift_a_id"]
+          },
+          {
+            foreignKeyName: "handover_notes_shift_id_fkey"
+            columns: ["shift_id"]
+            isOneToOne: false
+            referencedRelation: "v_carer_shift_conflicts"
+            referencedColumns: ["shift_b_id"]
+          },
+          {
+            foreignKeyName: "handover_notes_shift_id_fkey"
+            columns: ["shift_id"]
+            isOneToOne: false
+            referencedRelation: "v_unassigned_shifts"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "handover_notes_to_carer_id_fkey"
             columns: ["to_carer_id"]
             isOneToOne: false
             referencedRelation: "carers"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      locations: {
-        Row: {
-          address: string | null
-          created_at: string
-          email: string | null
-          id: string
-          is_active: boolean
-          name: string
-          org_id: string
-          phone: string | null
-          updated_at: string
-        }
-        Insert: {
-          address?: string | null
-          created_at?: string
-          email?: string | null
-          id?: string
-          is_active?: boolean
-          name: string
-          org_id: string
-          phone?: string | null
-          updated_at?: string
-        }
-        Update: {
-          address?: string | null
-          created_at?: string
-          email?: string | null
-          id?: string
-          is_active?: boolean
-          name?: string
-          org_id?: string
-          phone?: string | null
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "locations_org_id_fkey"
-            columns: ["org_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
@@ -1036,6 +1446,56 @@ export type Database = {
           },
           {
             foreignKeyName: "incidents_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      locations: {
+        Row: {
+          address: string | null
+          created_at: string
+          email: string | null
+          id: string
+          is_active: boolean
+          lat: number | null
+          lng: number | null
+          name: string
+          org_id: string
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_active?: boolean
+          lat?: number | null
+          lng?: number | null
+          name: string
+          org_id: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_active?: boolean
+          lat?: number | null
+          lng?: number | null
+          name?: string
+          org_id?: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "locations_org_id_fkey"
             columns: ["org_id"]
             isOneToOne: false
             referencedRelation: "organizations"
@@ -1166,31 +1626,31 @@ export type Database = {
           created_at: string | null
           id: string
           name: string
+          seats_purchased: number | null
           stripe_customer_id: string | null
           subscription_id: string | null
           subscription_status: string | null
           trial_ends_at: string | null
-          seats_purchased: number | null
         }
         Insert: {
           created_at?: string | null
           id?: string
           name: string
+          seats_purchased?: number | null
           stripe_customer_id?: string | null
           subscription_id?: string | null
           subscription_status?: string | null
           trial_ends_at?: string | null
-          seats_purchased?: number | null
         }
         Update: {
           created_at?: string | null
           id?: string
           name?: string
+          seats_purchased?: number | null
           stripe_customer_id?: string | null
           subscription_id?: string | null
           subscription_status?: string | null
           trial_ends_at?: string | null
-          seats_purchased?: number | null
         }
         Relationships: []
       }
@@ -1395,198 +1855,6 @@ export type Database = {
           },
         ]
       }
-      analytics_events: {
-        Row: {
-          actor_id: string | null
-          created_at: string
-          entity_id: string | null
-          entity_type: string | null
-          event_type: string
-          id: string
-          metadata: Json | null
-          org_id: string | null
-        }
-        Insert: {
-          actor_id?: string | null
-          created_at?: string
-          entity_id?: string | null
-          entity_type?: string | null
-          event_type: string
-          id?: string
-          metadata?: Json | null
-          org_id?: string | null
-        }
-        Update: {
-          actor_id?: string | null
-          created_at?: string
-          entity_id?: string | null
-          entity_type?: string | null
-          event_type?: string
-          id?: string
-          metadata?: Json | null
-          org_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "analytics_events_org_id_fkey"
-            columns: ["org_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      complaints: {
-        Row: {
-          assigned_to: string | null
-          category: string
-          client_id: string | null
-          complaint_text: string
-          created_at: string
-          id: string
-          investigation_notes: string | null
-          investigated_at: string | null
-          org_id: string | null
-          raised_by_email: string | null
-          raised_by_name: string
-          raised_by_phone: string | null
-          received_at: string
-          relationship_to_client: string | null
-          resolution_text: string | null
-          resolved_at: string | null
-          resolved_by: string | null
-          severity: string
-          status: string
-          updated_at: string
-        }
-        Insert: {
-          assigned_to?: string | null
-          category?: string
-          client_id?: string | null
-          complaint_text: string
-          created_at?: string
-          id?: string
-          investigation_notes?: string | null
-          investigated_at?: string | null
-          org_id?: string | null
-          raised_by_email?: string | null
-          raised_by_name: string
-          raised_by_phone?: string | null
-          received_at?: string
-          relationship_to_client?: string | null
-          resolution_text?: string | null
-          resolved_at?: string | null
-          resolved_by?: string | null
-          severity?: string
-          status?: string
-          updated_at?: string
-        }
-        Update: {
-          assigned_to?: string | null
-          category?: string
-          client_id?: string | null
-          complaint_text?: string
-          created_at?: string
-          id?: string
-          investigation_notes?: string | null
-          investigated_at?: string | null
-          org_id?: string | null
-          raised_by_email?: string | null
-          raised_by_name?: string
-          raised_by_phone?: string | null
-          received_at?: string
-          relationship_to_client?: string | null
-          resolution_text?: string | null
-          resolved_at?: string | null
-          resolved_by?: string | null
-          severity?: string
-          status?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "complaints_org_id_fkey"
-            columns: ["org_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "complaints_client_id_fkey"
-            columns: ["client_id"]
-            isOneToOne: false
-            referencedRelation: "clients"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "complaints_assigned_to_fkey"
-            columns: ["assigned_to"]
-            isOneToOne: false
-            referencedRelation: "admins"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "complaints_resolved_by_fkey"
-            columns: ["resolved_by"]
-            isOneToOne: false
-            referencedRelation: "admins"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      daily_metrics: {
-        Row: {
-          compliant_carers: number | null
-          compliance_score: number | null
-          created_at: string
-          documents_compliant: number | null
-          documents_expired: number | null
-          documents_expiring: number | null
-          id: string
-          metric_date: string
-          open_incidents: number | null
-          org_id: string
-          total_carers: number | null
-          total_clients: number | null
-        }
-        Insert: {
-          compliant_carers?: number | null
-          compliance_score?: number | null
-          created_at?: string
-          documents_compliant?: number | null
-          documents_expired?: number | null
-          documents_expiring?: number | null
-          id?: string
-          metric_date: string
-          open_incidents?: number | null
-          org_id: string
-          total_carers?: number | null
-          total_clients?: number | null
-        }
-        Update: {
-          compliant_carers?: number | null
-          compliance_score?: number | null
-          created_at?: string
-          documents_compliant?: number | null
-          documents_expired?: number | null
-          documents_expiring?: number | null
-          id?: string
-          metric_date?: string
-          open_incidents?: number | null
-          org_id?: string
-          total_carers?: number | null
-          total_clients?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "daily_metrics_org_id_fkey"
-            columns: ["org_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
     }
     Views: {
       v_carer_shift_conflicts: {
@@ -1604,7 +1872,36 @@ export type Database = {
           shift_b_id: string | null
           shift_b_start: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "shifts_carer_id_fkey"
+            columns: ["carer_id"]
+            isOneToOne: false
+            referencedRelation: "carers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shifts_client_id_fkey"
+            columns: ["shift_b_client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shifts_client_id_fkey"
+            columns: ["shift_a_client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shifts_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       v_unassigned_shifts: {
         Row: {
@@ -1617,7 +1914,49 @@ export type Database = {
           start_time: string | null
           status: string | null
         }
-        Relationships: []
+        Insert: {
+          client_id?: string | null
+          end_time?: string | null
+          id?: string | null
+          location_id?: string | null
+          notes?: string | null
+          org_id?: string | null
+          start_time?: string | null
+          status?: string | null
+        }
+        Update: {
+          client_id?: string | null
+          end_time?: string | null
+          id?: string | null
+          location_id?: string | null
+          notes?: string | null
+          org_id?: string | null
+          start_time?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shifts_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shifts_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shifts_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Functions: {
@@ -1640,12 +1979,12 @@ export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1669,11 +2008,11 @@ export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1694,11 +2033,11 @@ export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1719,11 +2058,11 @@ export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1736,11 +2075,11 @@ export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }

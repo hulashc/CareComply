@@ -4,9 +4,9 @@ import { useState } from "react";
 import { UserPlus, Send, Heart, Upload, ChevronDown, ChevronRight } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import AddCarerForm from "./add-carer-form";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import InviteCarerForm from "./invite-carer-form";
-import AddClientForm from "./add-client-form";
 import AddDocumentForm from "./add-document-form";
 
 const sections = [
@@ -66,9 +66,13 @@ export default function QuickAddPage() {
               </button>
               {isOpen && (
                 <div className="px-6 pb-6">
-                  {s.id === "carer" && <AddCarerForm />}
+                  {s.id === "carer" && (
+                    <Link href="/dashboard/add-carer"><Button className="rounded-xl">Open the carer form</Button></Link>
+                  )}
                   {s.id === "invite" && <InviteCarerForm />}
-                  {s.id === "client" && <AddClientForm />}
+                  {s.id === "client" && (
+                    <Link href="/dashboard/clients/new"><Button className="rounded-xl">Open the client form</Button></Link>
+                  )}
                   {s.id === "document" && <AddDocumentForm />}
                 </div>
               )}

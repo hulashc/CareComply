@@ -1,47 +1,25 @@
-"use client";
+import Image from "next/image";
 
-import { useState } from "react";
+type Props = {
+  /** Public path of the photo shown behind the purple overlay. */
+  image?: string;
+  alt?: string;
+};
 
-export function AuthRightPanel() {
-  const [videoError, setVideoError] = useState(false);
-
+export function AuthRightPanel({ image = "/images/auth-carer-wheelchair.jpg", alt = "" }: Props) {
   return (
-    <div className="relative hidden flex-1 lg:flex items-center justify-center overflow-hidden">
-      <style>{`
-        @keyframes weave {
-          0%, 2%    { background-position: 0 0,       30px 30px,    0 0,         30px 30px; }
-          10%, 15%  { background-position: 0 0,       30px 30px,    0 30px,      30px 0;    }
-          22.5%, 27.5% { background-position: 30px 0, 0 30px,       0 30px,      30px 0;    }
-          35%, 40%  { background-position: 30px 0,    0 30px,       0 0,         30px -30px; }
-          47.5%, 52.5% { background-position: 0 0,    -30px 30px,   0 0,         30px -30px; }
-          60%, 65%  { background-position: 0 0,       -30px 30px,   0 -30px,     30px 0;    }
-          72.5%, 77.5% { background-position: -30px 0, 0 30px,      0 -30px,     30px 0;    }
-          85%, 90%  { background-position: -30px 0,    0 30px,       0 0,         30px 30px; }
-          98%, 100% { background-position: 0 0,        30px 30px,    0 0,         30px 30px; }
-        }
-
-        .weave-bg {
-          --b: 4px;
-          --s: 60px;
-          background:
-            conic-gradient(from -90deg at calc(50% + var(--b)) calc(100% - var(--b)), transparent 75%, rgba(20,130,125,0.55) 0),
-            conic-gradient(from -90deg at calc(50% + var(--b)) calc(100% - var(--b)), transparent 75%, rgba(20,130,125,0.55) 0),
-            conic-gradient(from -90deg at var(--b) calc(50% - var(--b)), transparent 75%, rgba(20,130,125,0.55) 0),
-            conic-gradient(from -90deg at var(--b) calc(50% - var(--b)), transparent 75%, rgba(20,130,125,0.55) 0),
-            hsl(178,30%,94%);
-          background-size: var(--s) var(--s);
-          animation: weave 10s infinite;
-        }
-      `}</style>
-
-      <div className="absolute inset-0 weave-bg" />
-
-      {!videoError && (
-        <video autoPlay muted loop playsInline preload="auto" className="absolute inset-0 w-full h-full object-cover opacity-15 z-10" onError={() => setVideoError(true)}>
-          <source src="/auth-video.mp4" type="video/mp4" />
-          <source src="/auth-video.webm" type="video/webm" />
-        </video>
-      )}
+    <div className="relative hidden flex-1 items-center justify-center overflow-hidden lg:flex">
+      <div className="absolute inset-0 gradient-hero" />
+      <Image
+        src={image}
+        alt={alt}
+        fill
+        priority
+        sizes="(min-width: 1024px) 400px, 0px"
+        className="object-cover"
+      />
+      {/* Purple wash so the photo sits inside the brand palette. */}
+      <div className="absolute inset-0 bg-gradient-to-t from-[hsl(var(--hero-from))]/85 via-[hsl(var(--hero-mid))]/35 to-transparent" />
     </div>
   );
 }
