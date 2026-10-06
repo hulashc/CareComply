@@ -69,7 +69,7 @@ function UserMenu({ collapsed }: { collapsed: boolean }) {
           "flex items-center gap-3 rounded-xl p-2 text-left transition-colors hover:bg-white/10 w-full",
           collapsed && "justify-center"
         )} aria-label="Open user menu">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-violet-400 via-purple-500 to-pink-500 text-sm font-bold text-white shadow-sm shadow-purple-500/20">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 via-teal-500 to-emerald-500 text-sm font-bold text-white shadow-sm shadow-teal-500/20">
             {initials}
           </div>
           {!collapsed && (
@@ -129,13 +129,13 @@ export default function DashboardLayoutClient({ children }: { children: React.Re
 
       {/* Sidebar */}
       <aside className={cn(
-        "fixed inset-y-0 left-0 z-50 flex flex-col text-sidebar-foreground transition-all duration-300 shadow-sidebar bg-gradient-to-b from-[#1a1a3e] via-[#1e1a45] to-[#14142e]",
+        "fixed inset-y-0 left-0 z-50 flex flex-col text-sidebar-foreground transition-all duration-300 shadow-sidebar bg-gradient-to-b from-[#2f6f6e] via-[#2b6766] to-[#245857]",
         sidebarWidth,
         mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
       )}>
         {/* Brand */}
         <div className={cn("flex items-center gap-3 border-b border-white/10 px-4 py-4", collapsed && "justify-center px-2")}>
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-violet-400 via-purple-500 to-pink-500 text-base font-bold text-white shadow-lg shadow-purple-500/30">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-base font-bold text-teal-700 shadow-lg shadow-black/10">
             C
           </div>
           {!collapsed && (
@@ -156,8 +156,8 @@ export default function DashboardLayoutClient({ children }: { children: React.Re
                   "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all",
                   collapsed && "justify-center px-2",
                   active
-                    ? "bg-gradient-to-r from-purple-500/20 to-pink-500/10 text-white shadow-sm border border-purple-400/20"
-                    : "text-white/60 hover:text-white hover:bg-white/8"
+                    ? "bg-white/15 text-white shadow-sm border border-white/25"
+                    : "text-white/80 hover:text-white hover:bg-white/10"
                 )}
                 title={collapsed ? item.label : undefined}
               >
@@ -170,7 +170,7 @@ export default function DashboardLayoutClient({ children }: { children: React.Re
           {!collapsed && (
             <>
               <div className="pt-4 pb-2">
-                <p className="px-3 text-[10px] font-semibold uppercase tracking-widest text-white/30">Quick Actions</p>
+                <p className="px-3 text-[10px] font-semibold uppercase tracking-widest text-white/65">Quick Actions</p>
               </div>
               {quickActions.map((item) => (
                 <Link
@@ -178,7 +178,7 @@ export default function DashboardLayoutClient({ children }: { children: React.Re
                   href={item.href}
                   onClick={() => setMobileOpen(false)}
                   className={cn(
-                    "flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-white/50 transition-all hover:text-white hover:bg-white/8"
+                    "flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-white/75 transition-all hover:text-white hover:bg-white/10"
                   )}
                 >
                   <item.icon className="h-4 w-4 shrink-0" />
@@ -193,7 +193,7 @@ export default function DashboardLayoutClient({ children }: { children: React.Re
         <div className="hidden lg:flex border-t border-white/10 px-3 py-2">
           <button
             onClick={() => setCollapsed(!collapsed)}
-            className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm text-white/40 transition-all hover:text-white hover:bg-gradient-to-r hover:from-purple-500/10 hover:to-pink-500/5"
+            className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm text-white/75 transition-all hover:text-white hover:bg-white/10"
             aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
             {collapsed ? <ChevronRight className="h-4 w-4" /> : <><ChevronLeft className="h-4 w-4" /><span>Collapse</span></>}

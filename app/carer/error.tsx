@@ -7,10 +7,10 @@ import { AlertTriangle } from "lucide-react";
 export default function CarerHomeError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   return (
     <div className="space-y-6">
-      <Card className="rounded-2xl border-0 shadow-card" style={{ borderLeft: "4px solid hsl(239 84% 67%)" }}>
+      <Card className="rounded-2xl border-0 shadow-card" style={{ borderLeft: "4px solid hsl(178 45% 33%)" }}>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-purple-500">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-teal-500 to-teal-500">
               <AlertTriangle className="h-4 w-4 text-white" />
             </div>
             Error Loading Home

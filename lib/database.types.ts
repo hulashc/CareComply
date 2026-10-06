@@ -1250,6 +1250,8 @@ export type Database = {
       }
       shifts: {
         Row: {
+          actual_end: string | null
+          actual_start: string | null
           carer_id: string | null
           client_id: string
           created_at: string
@@ -1264,6 +1266,8 @@ export type Database = {
           status: string
         }
         Insert: {
+          actual_end?: string | null
+          actual_start?: string | null
           carer_id?: string | null
           client_id: string
           created_at?: string
@@ -1278,6 +1282,8 @@ export type Database = {
           status?: string
         }
         Update: {
+          actual_end?: string | null
+          actual_start?: string | null
           carer_id?: string | null
           client_id?: string
           created_at?: string
@@ -1583,7 +1589,36 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      v_carer_shift_conflicts: {
+        Row: {
+          carer_id: string | null
+          org_id: string | null
+          overlap_end: string | null
+          overlap_start: string | null
+          shift_a_client_id: string | null
+          shift_a_end: string | null
+          shift_a_id: string | null
+          shift_a_start: string | null
+          shift_b_client_id: string | null
+          shift_b_end: string | null
+          shift_b_id: string | null
+          shift_b_start: string | null
+        }
+        Relationships: []
+      }
+      v_unassigned_shifts: {
+        Row: {
+          client_id: string | null
+          end_time: string | null
+          id: string | null
+          location_id: string | null
+          notes: string | null
+          org_id: string | null
+          start_time: string | null
+          status: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       calculate_document_status: { Args: { expiry: string }; Returns: string }

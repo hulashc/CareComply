@@ -44,7 +44,7 @@ const kloes = [
   {
     key: "Caring",
     icon: Heart,
-    color: "bg-pink-50 text-pink-700 border-pink-200",
+    color: "bg-emerald-50 text-emerald-700 border-emerald-200",
     regulation: "Regulation 9: Person-centred care",
     inspectorLooksFor: "CQC evaluates whether people are treated with compassion, dignity, and respect. They look at: how care is personalised, emotional support provided, and whether staff understand individual needs.",
     howCareComplyDelivers: [
@@ -69,7 +69,7 @@ const kloes = [
   {
     key: "Well-led",
     icon: BarChart3,
-    color: "bg-purple-50 text-purple-700 border-purple-200",
+    color: "bg-teal-50 text-teal-700 border-teal-200",
     regulation: "Regulation 17: Good governance",
     inspectorLooksFor: "CQC assess leadership, management, and governance. They look for: quality assurance systems, audit processes, staff training compliance, and how the registered manager oversees the service.",
     howCareComplyDelivers: [

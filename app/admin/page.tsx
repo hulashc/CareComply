@@ -40,7 +40,7 @@ export default async function AdminOverviewPage() {
           { label: "Total Organizations", value: totalOrgs, icon: Building2, color: "bg-blue-50 text-blue-700" },
           { label: "Active Subscriptions", value: activeSubs, icon: CreditCard, color: "bg-green-50 text-green-700" },
           { label: "Trial Subscriptions", value: trialSubs, icon: Shield, color: "bg-amber-50 text-amber-700" },
-          { label: "Total Admin Users", value: totalAdmins, icon: Users, color: "bg-purple-50 text-purple-700" },
+          { label: "Total Admin Users", value: totalAdmins, icon: Users, color: "bg-teal-50 text-teal-700" },
         ].map(stat => (
           <Card key={stat.label} className="rounded-xl border border-border/50 shadow-card">
             <CardContent className="flex items-center gap-4 p-5">

@@ -7,10 +7,10 @@ import { AlertTriangle } from "lucide-react";
 export default function CarerHandoversError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   return (
     <div className="space-y-6">
-      <Card className="rounded-2xl border-0 shadow-card" style={{ borderLeft: "4px solid hsl(258 90% 66%)" }}>
+      <Card className="rounded-2xl border-0 shadow-card" style={{ borderLeft: "4px solid hsl(189 62% 38%)" }}>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500 to-pink-500">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-teal-500 to-emerald-500">
               <AlertTriangle className="h-4 w-4 text-white" />
             </div>
             Error Loading Handovers
