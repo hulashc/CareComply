@@ -33,14 +33,14 @@ export default function CarerLayoutClient({ children }: { children: React.ReactN
                 href={tab.href}
                 className={cn(
                   "flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg text-[10px] font-semibold tracking-wide transition-colors",
-                  active ? "text-indigo-600" : "text-slate-400 hover:text-slate-600"
+                  active ? "text-teal-600" : "text-slate-400 hover:text-slate-600"
                 )}
               >
                 <div className={cn(
                   "flex h-7 w-7 items-center justify-center rounded-lg transition-colors",
-                  active && "bg-indigo-50"
+                  active && "bg-teal-50"
                 )}>
-                  <tab.icon className={cn("h-4 w-4", active && "text-indigo-600")} />
+                  <tab.icon className={cn("h-4 w-4", active && "text-teal-600")} />
                 </div>
                 {tab.label}
               </Link>

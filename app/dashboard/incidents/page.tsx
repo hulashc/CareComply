@@ -40,7 +40,7 @@ const severityColors: Record<string, string> = {
 const categoryColors: Record<string, string> = {
   fall: "bg-orange-100 text-orange-700 border-orange-300",
   medication_error: "bg-red-100 text-red-700 border-red-300",
-  safeguarding: "bg-purple-100 text-purple-700 border-purple-300",
+  safeguarding: "bg-teal-100 text-teal-700 border-teal-300",
   behaviour: "bg-yellow-100 text-yellow-700 border-yellow-300",
   missing_person: "bg-red-100 text-red-700 border-red-300",
   other: "bg-gray-100 text-gray-700 border-gray-300",

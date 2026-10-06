@@ -37,7 +37,7 @@ export default function CarerClientContent() {
 
   if (loading) return (
     <div className="flex items-center justify-center py-20">
-      <Loader2 className="h-6 w-6 animate-spin text-indigo-500" />
+      <Loader2 className="h-6 w-6 animate-spin text-teal-500" />
     </div>
   );
 
@@ -51,13 +51,13 @@ export default function CarerClientContent() {
 
   return (
     <div className="space-y-4">
-      <Link href="/carer" className="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-600 hover:text-indigo-700">
+      <Link href="/carer" className="inline-flex items-center gap-1.5 text-xs font-semibold text-teal-600 hover:text-teal-700">
         <ArrowLeft className="h-3.5 w-3.5" /> Back
       </Link>
 
       <div className="rounded-xl bg-white border border-slate-200 p-4 shadow-sm">
         <div className="flex items-center gap-4">
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-indigo-500 text-white text-lg font-bold shadow-sm">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-teal-500 text-white text-lg font-bold shadow-sm">
             {client.full_name?.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase() ?? "?"}
           </div>
           <div className="min-w-0">
@@ -78,7 +78,7 @@ export default function CarerClientContent() {
       {carePlans.length > 0 && (
         <div className="rounded-xl bg-white border border-slate-200 p-4 shadow-sm">
           <div className="flex items-center gap-2 mb-3">
-            <Activity className="h-4 w-4 text-indigo-500" />
+            <Activity className="h-4 w-4 text-teal-500" />
             <h2 className="text-sm font-bold text-slate-800">Care Plan</h2>
           </div>
           <div className="space-y-3">
@@ -151,8 +151,8 @@ export default function CarerClientContent() {
 
       <div className="grid grid-cols-2 gap-2.5 pb-4">
         <Link href={`/carer/notes?client=${id}`} className="block">
-          <div className="rounded-xl bg-white border border-slate-200 p-3.5 text-center shadow-sm hover:border-indigo-200 hover:shadow-md transition-all active:scale-[0.97]">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-500 mx-auto mb-1.5">
+          <div className="rounded-xl bg-white border border-slate-200 p-3.5 text-center shadow-sm hover:border-teal-200 hover:shadow-md transition-all active:scale-[0.97]">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-teal-500 mx-auto mb-1.5">
               <Pill className="h-5 w-5 text-white" />
             </div>
             <span className="text-xs font-bold text-slate-700">Record Note</span>
