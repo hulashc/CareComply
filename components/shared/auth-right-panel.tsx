@@ -24,11 +24,11 @@ export function AuthRightPanel() {
           --b: 4px;
           --s: 60px;
           background:
-            conic-gradient(from -90deg at calc(50% + var(--b)) calc(100% - var(--b)), transparent 75%, rgba(20,160,140,0.7) 0),
-            conic-gradient(from -90deg at calc(50% + var(--b)) calc(100% - var(--b)), transparent 75%, rgba(20,160,140,0.7) 0),
-            conic-gradient(from -90deg at var(--b) calc(50% - var(--b)), transparent 75%, rgba(20,160,140,0.7) 0),
-            conic-gradient(from -90deg at var(--b) calc(50% - var(--b)), transparent 75%, rgba(20,160,140,0.7) 0),
-            hsl(220,40%,15%);
+            conic-gradient(from -90deg at calc(50% + var(--b)) calc(100% - var(--b)), transparent 75%, rgba(20,130,125,0.55) 0),
+            conic-gradient(from -90deg at calc(50% + var(--b)) calc(100% - var(--b)), transparent 75%, rgba(20,130,125,0.55) 0),
+            conic-gradient(from -90deg at var(--b) calc(50% - var(--b)), transparent 75%, rgba(20,130,125,0.55) 0),
+            conic-gradient(from -90deg at var(--b) calc(50% - var(--b)), transparent 75%, rgba(20,130,125,0.55) 0),
+            hsl(178,30%,94%);
           background-size: var(--s) var(--s);
           animation: weave 10s infinite;
         }
