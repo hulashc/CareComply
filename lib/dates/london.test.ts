@@ -9,6 +9,11 @@ import {
   londonParts,
   londonToday,
   londonWeekRange,
+  dayNumber,
+  isoWeekdayOf,
+  londonDateOf,
+  londonWallClockToInstant,
+  parseCalendarDate,
 } from "./london";
 
 const iso = (d: Date) => d.toISOString();
@@ -101,5 +106,57 @@ describe("helpers", () => {
   it("formatLondonTime renders London wall-clock time", () => {
     expect(formatLondonTime("2026-07-15T08:30:00Z")).toBe("09:30");
     expect(formatLondonTime("2026-01-15T08:30:00Z")).toBe("08:30");
+  });
+});
+
+describe("londonWallClockToInstant", () => {
+  const at = (date: string, time: string) => {
+    const [h, m] = time.split(":").map(Number);
+    return iso(londonWallClockToInstant(parseCalendarDate(date), h, m));
+  };
+
+  it("keeps wall-clock time across the BST/GMT change: 08:00 is 08:00Z in winter, 07:00Z in summer", () => {
+    expect(at("2026-03-28", "08:00")).toBe("2026-03-28T08:00:00.000Z"); // GMT
+    expect(at("2026-03-30", "08:00")).toBe("2026-03-30T07:00:00.000Z"); // BST
+    expect(at("2026-10-24", "08:00")).toBe("2026-10-24T07:00:00.000Z"); // BST
+    expect(at("2026-10-26", "08:00")).toBe("2026-10-26T08:00:00.000Z"); // GMT
+  });
+
+  it("resolves a time inside the spring-forward gap to the later instant", () => {
+    // 01:30 on 29 Mar 2026 does not exist in London; the clock jumps 01:00 -> 02:00 BST.
+    expect(at("2026-03-29", "01:30")).toBe("2026-03-29T01:30:00.000Z");
+  });
+
+  it("resolves a repeated autumn time to the second (GMT) occurrence", () => {
+    expect(at("2026-10-25", "01:30")).toBe("2026-10-25T01:30:00.000Z");
+  });
+
+  it("round-trips through londonParts for ordinary times", () => {
+    const p = londonParts(londonWallClockToInstant({ year: 2026, month: 7, day: 15 }, 13, 45));
+    expect([p.year, p.month, p.day, p.hour, p.minute]).toEqual([2026, 7, 15, 13, 45]);
+  });
+});
+
+describe("parseCalendarDate / londonDateOf / isoWeekdayOf / dayNumber", () => {
+  it("parses valid dates and rejects malformed or impossible ones", () => {
+    expect(parseCalendarDate("2026-02-28")).toEqual({ year: 2026, month: 2, day: 28 });
+    expect(() => parseCalendarDate("2026-02-30")).toThrow();
+    expect(() => parseCalendarDate("26-2-3")).toThrow();
+    expect(() => parseCalendarDate("2026-13-01")).toThrow();
+  });
+
+  it("londonDateOf uses the London date, not the UTC date", () => {
+    expect(londonDateOf(new Date("2026-07-14T23:30:00Z"))).toBe("2026-07-15");
+    expect(londonDateOf(new Date("2026-01-14T23:30:00Z"))).toBe("2026-01-14");
+  });
+
+  it("isoWeekdayOf: Monday = 1, Sunday = 7", () => {
+    expect(isoWeekdayOf({ year: 2026, month: 7, day: 13 })).toBe(1); // Monday
+    expect(isoWeekdayOf({ year: 2026, month: 7, day: 19 })).toBe(7); // Sunday
+  });
+
+  it("dayNumber differs by exactly one per day, including over DST changes", () => {
+    expect(dayNumber({ year: 2026, month: 3, day: 30 }) - dayNumber({ year: 2026, month: 3, day: 28 })).toBe(2);
+    expect(dayNumber({ year: 2026, month: 10, day: 26 }) - dayNumber({ year: 2026, month: 10, day: 24 })).toBe(2);
   });
 });

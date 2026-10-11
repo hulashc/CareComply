@@ -19,6 +19,9 @@ const HOURS = Array.from({ length: 17 }, (_, i) => i + 7);
 
 const statusColors: Record<string, string> = {
   scheduled: "bg-blue-100 text-blue-700 border-blue-300",
+  unassigned: "bg-orange-100 text-orange-700 border-orange-300",
+  assigned: "bg-blue-100 text-blue-700 border-blue-300",
+  confirmed: "bg-indigo-100 text-indigo-700 border-indigo-300",
   in_progress: "bg-amber-100 text-amber-700 border-amber-300",
   completed: "bg-green-100 text-green-700 border-green-300",
   cancelled: "bg-red-100 text-red-700 border-red-300 line-through",

@@ -31,7 +31,7 @@ export async function GET(
 
   // Check carer is assigned to this client
   const { data: shift } = await ctx.svc.from("shifts")
-    .select("id").eq("carer_id", ctx.carerId).eq("client_id", id).limit(1);
+    .select("id").eq("carer_id", ctx.carerId).eq("client_id", id).eq("roster_state", "published").limit(1);
   if (!shift || shift.length === 0) {
     return NextResponse.json({ error: "Not assigned to this client" }, { status: 403 });
   }

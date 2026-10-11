@@ -19,7 +19,9 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
   const { status } = body;
-  if (!status || !["scheduled", "in_progress", "completed", "cancelled"].includes(status)) return NextResponse.json({ error: "Invalid status" }, { status: 400 });
+  // 'scheduled' is the pre-rostering name; the database maps it to assigned / unassigned (migration 023).
+  // 'unassigned' is derived from staffing and cannot be set directly.
+  if (!status || !["scheduled", "assigned", "confirmed", "in_progress", "completed", "cancelled"].includes(status)) return NextResponse.json({ error: "Invalid status" }, { status: 400 });
   const supabase = createAdminClient();
   const { error } = await supabase.from("shifts").update({ status }).eq("id", id).eq("org_id", admin.org_id);
   if (error) return NextResponse.json({ error: "Failed to update shift" }, { status: 500 });

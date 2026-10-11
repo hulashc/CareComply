@@ -20,6 +20,9 @@ type CarerRow = Tables<"carers">;
 
 const statusColors: Record<string, string> = {
   scheduled: "bg-blue-100 text-blue-700 border-blue-300",
+  unassigned: "bg-orange-100 text-orange-700 border-orange-300",
+  assigned: "bg-blue-100 text-blue-700 border-blue-300",
+  confirmed: "bg-indigo-100 text-indigo-700 border-indigo-300",
   in_progress: "bg-amber-100 text-amber-700 border-amber-300",
   completed: "bg-green-100 text-green-700 border-green-300",
   cancelled: "bg-red-100 text-red-700 border-red-300",
@@ -157,7 +160,7 @@ export default async function ShiftsPage({
                       <Badge variant="outline" className={`rounded-md text-[10px] ${statusColors[shift.status] || ""}`}>
                         {shift.status.replace("_", " ").toUpperCase()}
                       </Badge>
-                      {(shift.status === "scheduled" || shift.status === "in_progress") && (
+                      {shift.status !== "completed" && shift.status !== "cancelled" && (
                         <>
                           <ShiftActions shiftId={shift.id} status={shift.status} />
                           <DeleteButton apiUrl={`/api/shifts/${shift.id}`} entityName="shift" variant="ghost" size="icon" />

@@ -285,3 +285,36 @@ describe("groupQualifications", () => {
     expect(groupQualifications([{ carer_id: "a", qualification_type: "First Aid", expiry_date: "2027-01-01" }], today)).toEqual([]);
   });
 });
+
+describe("rostering statuses (migration 023)", () => {
+  it("a half-staffed double-up (status 'unassigned' with one carer) still needs cover", () => {
+    const halfStaffed = shift("a", "c1", "12:00", "13:00", { status: "unassigned" });
+    expect(selectUnassigned([halfStaffed], NOW).map((s) => s.id)).toEqual(["a"]);
+    expect(visitStatus(halfStaffed, NOW)).toEqual({ level: "red", label: "Unassigned" });
+  });
+
+  it("assigned and confirmed visits behave like the old 'scheduled'", () => {
+    for (const status of ["assigned", "confirmed"]) {
+      expect(visitStatus(shift("a", "c1", "12:00", "13:00", { status }), NOW)).toEqual({ level: "green", label: "Scheduled" });
+      expect(isMissed(shift("a", "c1", "07:00", "08:00", { status }), NOW)).toBe(true);
+      expect(isMissed(shift("a", "c1", "07:00", "08:00", { status, actual_start: "2026-07-15T07:00:00Z" }), NOW)).toBe(false);
+    }
+  });
+
+  it("an unassigned visit that has ended counts as missed, a cancelled one does not", () => {
+    expect(isMissed(shift("a", null, "07:00", "08:00", { status: "unassigned" }), NOW)).toBe(true);
+    expect(isMissed(shift("a", "c1", "07:00", "08:00", { status: "cancelled" }), NOW)).toBe(false);
+  });
+
+  it("selectUnassigned still excludes fully assigned and cancelled visits", () => {
+    const result = selectUnassigned(
+      [
+        shift("assigned", "c1", "12:00", "13:00", { status: "assigned" }),
+        shift("cancelled", null, "12:00", "13:00", { status: "cancelled" }),
+        shift("open", null, "14:00", "15:00", { status: "unassigned" }),
+      ],
+      NOW,
+    );
+    expect(result.map((s) => s.id)).toEqual(["open"]);
+  });
+});

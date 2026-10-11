@@ -15,7 +15,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useSubscription } from "@/components/shared/subscription-guard";
 import { WelcomeChecklist } from "@/components/shared/welcome-checklist";
 import {
-  LayoutDashboard, Users, Heart, CalendarClock,
+  LayoutDashboard, Users, Heart, CalendarClock, CalendarRange,
   Plus, Settings, MessageSquare, CalendarX,
   BarChart3, LogOut, Sun, Moon, CreditCard, X, CheckCircle2,
   MapPin, Shield, Menu, MoreHorizontal,
@@ -26,6 +26,7 @@ const primaryNav = [
   { label: "Clients", href: "/dashboard/clients", icon: Heart },
   { label: "Carers", href: "/dashboard/carers", icon: Users },
   { label: "Shifts", href: "/dashboard/shifts", icon: CalendarClock },
+  { label: "Roster", href: "/dashboard/roster", icon: CalendarRange },
   { label: "Compliance", href: "/dashboard/compliance", icon: Shield },
   { label: "Handovers", href: "/dashboard/handovers", icon: MessageSquare },
   { label: "Locations", href: "/dashboard/locations", icon: MapPin },

@@ -33,6 +33,7 @@ export async function GET() {
   const { data: shifts } = await svc.from("shifts")
     .select("*, clients(full_name)")
     .eq("carer_id", carerId)
+    .eq("roster_state", "published") // a draft roster is never visible to carers
     .gte("start_time", today)
     .order("start_time", { ascending: true });
 

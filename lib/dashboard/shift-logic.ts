@@ -6,6 +6,10 @@ export const SHORT_VISIT_RATIO = 0.8;
 export const CARE_PLAN_DUE_SOON_DAYS = 14;
 export const TRAINING_DUE_SOON_DAYS = 30;
 
+// Visit statuses before it starts. 'scheduled' is the pre-rostering name (migration 023 turns it
+// into assigned / unassigned) and stays here so this code works on either side of the migration.
+const NOT_STARTED_STATUSES = ["scheduled", "unassigned", "assigned", "confirmed"];
+
 export type UrgencyLevel = "red" | "amber" | "green";
 
 export interface Urgency {
@@ -76,10 +80,13 @@ export function findCarerConflicts<T extends ShiftLike>(shifts: T[]): ConflictPa
 
 // ── Unassigned ───────────────────────────────────────────────────────────────
 
-/** Shifts with no carer that haven't ended, soonest first (mirrors v_unassigned_shifts). */
+/**
+ * Shifts that still need a carer and haven't ended, soonest first (mirrors v_unassigned_shifts).
+ * That includes a double-up with only one of its two carers: its status is 'unassigned'.
+ */
 export function selectUnassigned<T extends ShiftLike>(shifts: T[], now: Date = new Date()): T[] {
   return shifts
-    .filter((s) => s.carer_id === null && s.status !== "cancelled" && ms(s.end_time) > now.getTime())
+    .filter((s) => (s.carer_id === null || s.status === "unassigned") && s.status !== "cancelled" && ms(s.end_time) > now.getTime())
     .sort((a, b) => ms(a.start_time) - ms(b.start_time));
 }
 
@@ -128,11 +135,11 @@ export function classifyTiming(shift: ShiftLike, now: Date = new Date()): VisitT
 
 export function isMissed(shift: ShiftLike, now: Date = new Date()): boolean {
   if (shift.status === "missed") return true;
-  return shift.status === "scheduled" && !shift.actual_start && ms(shift.end_time) < now.getTime();
+  return NOT_STARTED_STATUSES.includes(shift.status) && !shift.actual_start && ms(shift.end_time) < now.getTime();
 }
 
 export function visitStatus(shift: ShiftLike, now: Date = new Date()): Urgency {
-  if (!shift.carer_id) return { level: "red", label: "Unassigned" };
+  if (!shift.carer_id || shift.status === "unassigned") return { level: "red", label: "Unassigned" };
   if (isMissed(shift, now)) return { level: "red", label: "Missed" };
   switch (shift.status) {
     case "completed":
