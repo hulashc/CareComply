@@ -9,21 +9,21 @@ import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { EmptyState } from "@/components/shared/empty-state";
 import { SeedDemoButton } from "@/components/shared/seed-demo-button";
+import { Suspense } from "react";
+import { OperationsGrid } from "@/components/dashboard/operations/operations-grid";
+import { OperationsGridSkeleton } from "@/components/dashboard/operations/block-skeleton";
+import { DismissedCardsProvider } from "@/components/dashboard/dismissed-cards-provider";
+import { DismissibleCard, ShowHiddenCardsButton } from "@/components/dashboard/dismissible-card";
+import { daysFromLondonToday, londonHour } from "@/lib/dates/london";
 
 function getGreeting(): string {
-  const h = new Date().getHours();
+  const h = londonHour();
   if (h < 12) return "Good morning";
   if (h < 18) return "Good afternoon";
   return "Good evening";
 }
 
-function daysFromNow(dateStr: string): number {
-  const target = new Date(dateStr);
-  const now = new Date();
-  now.setHours(0, 0, 0, 0);
-  target.setHours(0, 0, 0, 0);
-  return Math.round((target.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-}
+const daysFromNow = (dateStr: string): number => daysFromLondonToday(dateStr);
 
 async function fetchData(orgId: string) {
   const supabase = createClient<Database>(
@@ -119,6 +119,7 @@ export default async function DashboardPage() {
   ];
 
   return (
+    <DismissedCardsProvider userId={admin?.id ?? "anonymous"}>
     <div className="animate-fade-up">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
@@ -126,12 +127,18 @@ export default async function DashboardPage() {
           <h1 className="text-2xl font-bold tracking-tight">{getGreeting()}, {admin?.full_name?.split(" ")[0] || "there"}</h1>
           <p className="mt-0.5 text-sm text-muted-foreground">Here&apos;s what&apos;s happening today.</p>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <ShowHiddenCardsButton />
           <Link href="/dashboard/shifts"><Button size="sm" variant="outline" className="rounded-lg gap-1.5 border-border/60 text-xs"><CalendarClock className="h-3.5 w-3.5" />Schedule Shift</Button></Link>
           <Link href="/dashboard/incidents"><Button size="sm" variant="outline" className="rounded-lg gap-1.5 border-red-200 text-destructive hover:bg-red-50 dark:border-red-900 dark:hover:bg-red-950/30 text-xs"><AlertOctagon className="h-3.5 w-3.5" />Report Incident</Button></Link>
           <Link href="/dashboard/invite-carer"><Button size="sm" className="rounded-lg gap-1.5 gradient-indigo text-white hover:opacity-90 shadow-glow-primary text-xs"><Send className="h-3.5 w-3.5" />Invite Carer</Button></Link>
         </div>
       </div>
+
+      {/* Operations grid */}
+      <Suspense fallback={<OperationsGridSkeleton />}>
+        <OperationsGrid orgId={orgId} userId={admin?.id ?? "anonymous"} />
+      </Suspense>
 
       {/* Errors banner */}
       {errors.length > 0 && (
@@ -149,9 +156,10 @@ export default async function DashboardPage() {
           {(expiredDocs.length > 0 || expiringDocs.length > 0) && (
             <div className="space-y-2.5">
               {expiredDocs.length > 0 && (
+                <DismissibleCard cardId="expired-documents" title="Expired Documents">
                 <Card className="rounded-lg border-red-300 dark:border-red-800 shadow-sm overflow-hidden">
                   <CardHeader className="bg-gradient-to-r from-red-50 to-red-50/50 dark:from-red-950/30 dark:to-red-950/10 border-b border-red-200/50 dark:border-red-800/50 py-2.5 px-4">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between pr-7">
                       <div className="flex items-center gap-2">
                         <XCircle className="h-4 w-4 text-destructive shrink-0" />
                         <CardTitle className="text-sm font-semibold text-destructive">Expired Documents</CardTitle>
@@ -186,12 +194,14 @@ export default async function DashboardPage() {
                     </div>
                   </CardContent>
                 </Card>
+                </DismissibleCard>
               )}
 
               {expiringDocs.length > 0 && (
+                <DismissibleCard cardId="expiring-soon" title="Expiring Soon">
                 <Card className="rounded-lg border-amber-300 dark:border-amber-800 shadow-sm overflow-hidden">
                   <CardHeader className="bg-gradient-to-r from-amber-50 to-amber-50/50 dark:from-amber-950/30 dark:to-amber-950/10 border-b border-amber-200/50 dark:border-amber-800/50 py-2.5 px-4">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between pr-7">
                       <div className="flex items-center gap-2">
                         <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0" />
                         <CardTitle className="text-sm font-semibold text-amber-700 dark:text-amber-300">Expiring Soon</CardTitle>
@@ -226,6 +236,7 @@ export default async function DashboardPage() {
                     </div>
                   </CardContent>
                 </Card>
+                </DismissibleCard>
               )}
 
               {compliantCount > 0 && (
@@ -357,8 +368,9 @@ export default async function DashboardPage() {
         {/* Right sidebar */}
         <div className="space-y-4">
           {/* Stats summary */}
+          <DismissibleCard cardId="overview" title="Overview">
           <Card className="rounded-lg border-border/40 shadow-sm">
-            <CardHeader className="py-2.5 px-4 border-b border-border/30">
+            <CardHeader className="py-2.5 px-4 pr-9 border-b border-border/30">
               <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Overview</CardTitle>
             </CardHeader>
             <CardContent className="p-0">
@@ -375,11 +387,13 @@ export default async function DashboardPage() {
               </div>
             </CardContent>
           </Card>
+          </DismissibleCard>
 
           {/* Mini compliance summary */}
           {documents.length > 0 && (
+            <DismissibleCard cardId="compliance" title="Compliance">
             <Card className="rounded-lg border-border/40 shadow-sm">
-              <CardHeader className="py-2.5 px-4 border-b border-border/30">
+              <CardHeader className="py-2.5 px-4 pr-9 border-b border-border/30">
                 <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Compliance</CardTitle>
               </CardHeader>
               <CardContent className="p-0">
@@ -408,6 +422,7 @@ export default async function DashboardPage() {
                 </div>
               </CardContent>
             </Card>
+            </DismissibleCard>
           )}
 
           {/* Seed Demo Data */}
@@ -415,5 +430,6 @@ export default async function DashboardPage() {
         </div>
       </div>
     </div>
+    </DismissedCardsProvider>
   );
 }

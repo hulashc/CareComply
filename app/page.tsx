@@ -1,9 +1,9 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { MarketingFooter } from "@/components/shared/marketing-footer";
 import { TrustStrip } from "@/components/marketing/trust-strip";
-import { HeroVisual } from "@/components/marketing/hero-visual";
 import { MobileCtaBar } from "@/components/marketing/mobile-cta-bar";
 import {
   Shield, ArrowRight, CheckCircle2, Heart, Sparkles, Pill, CalendarClock, BarChart3,
@@ -25,19 +25,19 @@ export default function Home() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-border/40 bg-background/80 backdrop-blur-xl">
+      <header className="absolute inset-x-0 top-0 z-50 text-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3.5 sm:px-6">
           <span className="flex items-center gap-2 text-lg font-bold tracking-tight sm:gap-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-accent text-base font-bold text-white shadow-glow-primary sm:h-10 sm:w-10">C</div>
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-white text-base font-bold text-primary shadow-card sm:h-10 sm:w-10">C</div>
             <span className="text-base sm:text-xl">CareComply</span>
           </span>
           <nav aria-label="Primary" className="flex items-center gap-2 sm:gap-3">
             <div className="mr-2 hidden items-center gap-6 md:flex">
-              <a href="#solution" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">Features</a>
-              <a href="#pricing" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">Pricing</a>
+              <a href="#solution" className="text-sm font-medium text-white/85 transition-colors hover:text-white">Features</a>
+              <a href="#pricing" className="text-sm font-medium text-white/85 transition-colors hover:text-white">Pricing</a>
             </div>
-            <Link href="/auth/login"><Button variant="ghost" className="rounded-xl text-sm h-9 px-2.5 sm:px-4">Sign In</Button></Link>
-            <Link href="/auth/sign-up"><Button className="rounded-xl gradient-indigo text-white hover:opacity-90 shadow-glow-primary h-9 px-3.5 text-sm font-medium sm:px-5">Get Started</Button></Link>
+            <Link href="/auth/login"><Button variant="ghost" className="h-9 px-2.5 text-white hover:bg-white/10 hover:text-white sm:px-4">Sign In</Button></Link>
+            <Link href="/auth/sign-up"><Button className="h-10 rounded-full gradient-indigo px-4 text-white hover:opacity-90 sm:px-6">Get Started</Button></Link>
           </nav>
         </div>
       </header>
@@ -45,17 +45,16 @@ export default function Home() {
       {/* Hero */}
       <section id="hero" className="relative overflow-hidden">
         <div className="absolute inset-0 gradient-hero" />
-        <div className="absolute inset-0 gradient-mesh opacity-60" />
-        <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-4 py-24 sm:py-32 lg:grid-cols-2 lg:py-36">
+                <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-4 pb-32 pt-32 sm:pb-40 sm:pt-40 lg:grid-cols-2">
           <div className="text-center lg:text-left">
             <div className="mx-auto mb-8 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-accent shadow-glow-primary animate-float lg:mx-0">
               <Sparkles className="h-8 w-8 text-white" aria-hidden="true" />
             </div>
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl leading-[1.1] text-white">
               Your carers deserve better than{" "}
-              <span className="bg-gradient-to-r from-secondary to-accent bg-clip-text text-transparent">paper and panic</span>
+              <span className="text-pink-300">paper and panic</span>
             </h1>
-            <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-white/90 sm:text-lg lg:mx-0">
+            <p className="mx-auto mt-6 max-w-xl font-serif text-base font-light leading-relaxed text-white/90 sm:text-lg lg:mx-0">
               CareComply keeps you inspection-ready, so you can focus on care, not compliance.
             </p>
             <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4 lg:justify-start">
@@ -71,15 +70,27 @@ export default function Home() {
               </Link>
             </div>
             <div className="mt-8 flex justify-center gap-6 text-xs text-white/80 lg:justify-start">
-              <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-secondary" aria-hidden="true" />No credit card</span>
-              <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-secondary" aria-hidden="true" />Cancel anytime</span>
-              <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-secondary" aria-hidden="true" />CQC-ready</span>
+              <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-pink-300" aria-hidden="true" />No credit card</span>
+              <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-pink-300" aria-hidden="true" />Cancel anytime</span>
+              <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-pink-300" aria-hidden="true" />CQC-ready</span>
             </div>
           </div>
-          <HeroVisual />
+          <div className="relative mx-auto w-full max-w-md lg:mx-0 lg:ml-auto">
+            <div className="absolute -inset-3 rounded-md bg-white/10 blur-xl" aria-hidden="true" />
+            <Image
+              src="/images/hero-care.jpg"
+              alt="A smiling carer holding hands with an older woman"
+              width={612}
+              height={408}
+              priority
+              sizes="(min-width: 1024px) 448px, 100vw"
+              className="relative h-auto w-full rounded-md shadow-elevated"
+            />
+          </div>
         </div>
       </section>
 
+      <div className="relative z-10 mx-auto -mt-20 max-w-6xl overflow-hidden rounded-md bg-card shadow-elevated">
       <TrustStrip />
 
       {/* The Solution */}
@@ -149,9 +160,11 @@ export default function Home() {
         </div>
       </section>
 
+      </div>
+
       {/* CTA */}
-      <section id="final-cta" className="relative overflow-hidden py-28 sm:py-32">
-        <div className="absolute inset-0 gradient-hero opacity-60" />
+      <section id="final-cta" className="relative mt-20 overflow-hidden py-28 sm:py-32">
+        <div className="absolute inset-0 gradient-hero" />
         <div className="relative mx-auto max-w-2xl px-4 text-center">
           <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-accent shadow-glow-primary">
             <Heart className="h-7 w-7 text-white" aria-hidden="true" />
