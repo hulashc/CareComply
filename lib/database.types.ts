@@ -692,6 +692,61 @@ export type Database = {
           },
         ]
       }
+      carer_unavailability: {
+        Row: {
+          carer_id: string
+          created_at: string
+          created_by: string | null
+          ends_at: string
+          id: string
+          org_id: string
+          reason: string | null
+          starts_at: string
+        }
+        Insert: {
+          carer_id: string
+          created_at?: string
+          created_by?: string | null
+          ends_at: string
+          id?: string
+          org_id: string
+          reason?: string | null
+          starts_at: string
+        }
+        Update: {
+          carer_id?: string
+          created_at?: string
+          created_by?: string | null
+          ends_at?: string
+          id?: string
+          org_id?: string
+          reason?: string | null
+          starts_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "carer_unavailability_carer_id_fkey"
+            columns: ["carer_id"]
+            isOneToOne: false
+            referencedRelation: "carers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "carer_unavailability_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "admins"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "carer_unavailability_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       carers: {
         Row: {
           address: string | null
@@ -716,19 +771,27 @@ export type Database = {
           health_declaration: string | null
           id: string
           is_available: boolean | null
+          is_smoker: boolean
+          languages: string[]
+          lat: number | null
+          lng: number | null
           location_id: string | null
+          max_weekly_hours: number | null
           ni_number_enc: string | null
           notes: string | null
           org_id: string | null
           pay_grade: string | null
+          pet_allergies: string[]
           phone: string | null
           postcode: string | null
           probation_end: string | null
           right_to_work_expiry: string | null
           right_to_work_status: string | null
           role: string
+          skills: string[]
           start_date: string | null
           status: string | null
+          transport_mode: string | null
           vehicle_insured: boolean
         }
         Insert: {
@@ -754,19 +817,27 @@ export type Database = {
           health_declaration?: string | null
           id?: string
           is_available?: boolean | null
+          is_smoker?: boolean
+          languages?: string[]
+          lat?: number | null
+          lng?: number | null
           location_id?: string | null
+          max_weekly_hours?: number | null
           ni_number_enc?: string | null
           notes?: string | null
           org_id?: string | null
           pay_grade?: string | null
+          pet_allergies?: string[]
           phone?: string | null
           postcode?: string | null
           probation_end?: string | null
           right_to_work_expiry?: string | null
           right_to_work_status?: string | null
           role?: string
+          skills?: string[]
           start_date?: string | null
           status?: string | null
+          transport_mode?: string | null
           vehicle_insured?: boolean
         }
         Update: {
@@ -792,19 +863,27 @@ export type Database = {
           health_declaration?: string | null
           id?: string
           is_available?: boolean | null
+          is_smoker?: boolean
+          languages?: string[]
+          lat?: number | null
+          lng?: number | null
           location_id?: string | null
+          max_weekly_hours?: number | null
           ni_number_enc?: string | null
           notes?: string | null
           org_id?: string | null
           pay_grade?: string | null
+          pet_allergies?: string[]
           phone?: string | null
           postcode?: string | null
           probation_end?: string | null
           right_to_work_expiry?: string | null
           right_to_work_status?: string | null
           role?: string
+          skills?: string[]
           start_date?: string | null
           status?: string | null
+          transport_mode?: string | null
           vehicle_insured?: boolean
         }
         Relationships: [
@@ -817,6 +896,58 @@ export type Database = {
           },
           {
             foreignKeyName: "carers_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      client_carer_preferences: {
+        Row: {
+          carer_id: string
+          client_id: string
+          created_at: string
+          id: string
+          kind: string
+          org_id: string
+          reason: string | null
+        }
+        Insert: {
+          carer_id: string
+          client_id: string
+          created_at?: string
+          id?: string
+          kind: string
+          org_id: string
+          reason?: string | null
+        }
+        Update: {
+          carer_id?: string
+          client_id?: string
+          created_at?: string
+          id?: string
+          kind?: string
+          org_id?: string
+          reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_carer_preferences_carer_id_fkey"
+            columns: ["carer_id"]
+            isOneToOne: false
+            referencedRelation: "carers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_carer_preferences_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_carer_preferences_org_id_fkey"
             columns: ["org_id"]
             isOneToOne: false
             referencedRelation: "organizations"
@@ -889,6 +1020,7 @@ export type Database = {
           allergies: string[]
           capacity_status: string | null
           care_notes: string | null
+          carer_gender_required: boolean
           communication_needs: string | null
           conditions: string[]
           consent_to_care: boolean
@@ -908,18 +1040,23 @@ export type Database = {
           id: string
           interpreter_needed: boolean
           key_worker_id: string | null
+          lat: number | null
           life_history: string | null
           likes: string | null
+          lng: number | null
           local_authority: string | null
           location_id: string | null
           lpa_holder: string | null
           mobility_level: string | null
           nhs_number: string | null
           org_id: string | null
+          pets: string[]
           phone: string | null
           photo_url: string | null
           postcode: string | null
+          preferred_carer_gender: string | null
           preferred_name: string | null
+          prefers_non_smoking_carer: boolean
           primary_language: string | null
           pronouns: string | null
           religion: string | null
@@ -934,6 +1071,7 @@ export type Database = {
           allergies?: string[]
           capacity_status?: string | null
           care_notes?: string | null
+          carer_gender_required?: boolean
           communication_needs?: string | null
           conditions?: string[]
           consent_to_care?: boolean
@@ -953,18 +1091,23 @@ export type Database = {
           id?: string
           interpreter_needed?: boolean
           key_worker_id?: string | null
+          lat?: number | null
           life_history?: string | null
           likes?: string | null
+          lng?: number | null
           local_authority?: string | null
           location_id?: string | null
           lpa_holder?: string | null
           mobility_level?: string | null
           nhs_number?: string | null
           org_id?: string | null
+          pets?: string[]
           phone?: string | null
           photo_url?: string | null
           postcode?: string | null
+          preferred_carer_gender?: string | null
           preferred_name?: string | null
+          prefers_non_smoking_carer?: boolean
           primary_language?: string | null
           pronouns?: string | null
           religion?: string | null
@@ -979,6 +1122,7 @@ export type Database = {
           allergies?: string[]
           capacity_status?: string | null
           care_notes?: string | null
+          carer_gender_required?: boolean
           communication_needs?: string | null
           conditions?: string[]
           consent_to_care?: boolean
@@ -998,18 +1142,23 @@ export type Database = {
           id?: string
           interpreter_needed?: boolean
           key_worker_id?: string | null
+          lat?: number | null
           life_history?: string | null
           likes?: string | null
+          lng?: number | null
           local_authority?: string | null
           location_id?: string | null
           lpa_holder?: string | null
           mobility_level?: string | null
           nhs_number?: string | null
           org_id?: string | null
+          pets?: string[]
           phone?: string | null
           photo_url?: string | null
           postcode?: string | null
+          preferred_carer_gender?: string | null
           preferred_name?: string | null
+          prefers_non_smoking_carer?: boolean
           primary_language?: string | null
           pronouns?: string | null
           religion?: string | null
@@ -1371,6 +1520,13 @@ export type Database = {
             foreignKeyName: "handover_notes_shift_id_fkey"
             columns: ["shift_id"]
             isOneToOne: false
+            referencedRelation: "v_roster_visits"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "handover_notes_shift_id_fkey"
+            columns: ["shift_id"]
+            isOneToOne: false
             referencedRelation: "v_unassigned_shifts"
             referencedColumns: ["id"]
           },
@@ -1708,6 +1864,227 @@ export type Database = {
           },
         ]
       }
+      roster_settings: {
+        Row: {
+          org_id: string
+          updated_at: string
+          updated_by: string | null
+          weights: Json
+        }
+        Insert: {
+          org_id: string
+          updated_at?: string
+          updated_by?: string | null
+          weights?: Json
+        }
+        Update: {
+          org_id?: string
+          updated_at?: string
+          updated_by?: string | null
+          weights?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roster_settings_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "roster_settings_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "admins"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shift_assignments: {
+        Row: {
+          assigned_at: string
+          assigned_by: string | null
+          carer_id: string
+          id: string
+          org_id: string
+          shift_id: string
+          slot: number
+        }
+        Insert: {
+          assigned_at?: string
+          assigned_by?: string | null
+          carer_id: string
+          id?: string
+          org_id: string
+          shift_id: string
+          slot: number
+        }
+        Update: {
+          assigned_at?: string
+          assigned_by?: string | null
+          carer_id?: string
+          id?: string
+          org_id?: string
+          shift_id?: string
+          slot?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shift_assignments_assigned_by_fkey"
+            columns: ["assigned_by"]
+            isOneToOne: false
+            referencedRelation: "admins"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shift_assignments_carer_id_fkey"
+            columns: ["carer_id"]
+            isOneToOne: false
+            referencedRelation: "carers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shift_assignments_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shift_assignments_shift_id_fkey"
+            columns: ["shift_id"]
+            isOneToOne: false
+            referencedRelation: "shifts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shift_assignments_shift_id_fkey"
+            columns: ["shift_id"]
+            isOneToOne: false
+            referencedRelation: "v_carer_shift_conflicts"
+            referencedColumns: ["shift_a_id"]
+          },
+          {
+            foreignKeyName: "shift_assignments_shift_id_fkey"
+            columns: ["shift_id"]
+            isOneToOne: false
+            referencedRelation: "v_carer_shift_conflicts"
+            referencedColumns: ["shift_b_id"]
+          },
+          {
+            foreignKeyName: "shift_assignments_shift_id_fkey"
+            columns: ["shift_id"]
+            isOneToOne: false
+            referencedRelation: "v_roster_visits"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shift_assignments_shift_id_fkey"
+            columns: ["shift_id"]
+            isOneToOne: false
+            referencedRelation: "v_unassigned_shifts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shift_series: {
+        Row: {
+          by_weekday: number[]
+          client_id: string
+          created_at: string
+          created_by: string | null
+          default_carer_ids: string[]
+          duration_minutes: number
+          excluded_dates: string[]
+          frequency: string
+          generated_until: string | null
+          id: string
+          location_id: string | null
+          notes: string | null
+          org_id: string
+          repeat_every: number
+          required_carers: number
+          required_skills: string[]
+          start_date: string
+          start_time: string
+          until_date: string | null
+          updated_at: string
+        }
+        Insert: {
+          by_weekday?: number[]
+          client_id: string
+          created_at?: string
+          created_by?: string | null
+          default_carer_ids?: string[]
+          duration_minutes: number
+          excluded_dates?: string[]
+          frequency: string
+          generated_until?: string | null
+          id?: string
+          location_id?: string | null
+          notes?: string | null
+          org_id: string
+          repeat_every?: number
+          required_carers?: number
+          required_skills?: string[]
+          start_date: string
+          start_time: string
+          until_date?: string | null
+          updated_at?: string
+        }
+        Update: {
+          by_weekday?: number[]
+          client_id?: string
+          created_at?: string
+          created_by?: string | null
+          default_carer_ids?: string[]
+          duration_minutes?: number
+          excluded_dates?: string[]
+          frequency?: string
+          generated_until?: string | null
+          id?: string
+          location_id?: string | null
+          notes?: string | null
+          org_id?: string
+          repeat_every?: number
+          required_carers?: number
+          required_skills?: string[]
+          start_date?: string
+          start_time?: string
+          until_date?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shift_series_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shift_series_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "admins"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shift_series_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shift_series_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shifts: {
         Row: {
           actual_end: string | null
@@ -1715,15 +2092,24 @@ export type Database = {
           carer_id: string | null
           client_id: string
           created_at: string
+          created_by: string | null
           end_time: string
           id: string
+          is_series_exception: boolean
           location_id: string | null
           notes: string | null
+          occurrence_date: string | null
           org_id: string | null
+          published_at: string | null
           recurrence_end_date: string | null
           recurrence_type: string | null
+          required_carers: number
+          required_skills: string[]
+          roster_state: string
+          series_id: string | null
           start_time: string
           status: string
+          updated_at: string
         }
         Insert: {
           actual_end?: string | null
@@ -1731,15 +2117,24 @@ export type Database = {
           carer_id?: string | null
           client_id: string
           created_at?: string
+          created_by?: string | null
           end_time: string
           id?: string
+          is_series_exception?: boolean
           location_id?: string | null
           notes?: string | null
+          occurrence_date?: string | null
           org_id?: string | null
+          published_at?: string | null
           recurrence_end_date?: string | null
           recurrence_type?: string | null
+          required_carers?: number
+          required_skills?: string[]
+          roster_state?: string
+          series_id?: string | null
           start_time: string
           status?: string
+          updated_at?: string
         }
         Update: {
           actual_end?: string | null
@@ -1747,15 +2142,24 @@ export type Database = {
           carer_id?: string | null
           client_id?: string
           created_at?: string
+          created_by?: string | null
           end_time?: string
           id?: string
+          is_series_exception?: boolean
           location_id?: string | null
           notes?: string | null
+          occurrence_date?: string | null
           org_id?: string | null
+          published_at?: string | null
           recurrence_end_date?: string | null
           recurrence_type?: string | null
+          required_carers?: number
+          required_skills?: string[]
+          roster_state?: string
+          series_id?: string | null
           start_time?: string
           status?: string
+          updated_at?: string
         }
         Relationships: [
           {
@@ -1773,6 +2177,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "shifts_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "admins"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "shifts_location_id_fkey"
             columns: ["location_id"]
             isOneToOne: false
@@ -1781,6 +2192,48 @@ export type Database = {
           },
           {
             foreignKeyName: "shifts_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shifts_series_id_fkey"
+            columns: ["series_id"]
+            isOneToOne: false
+            referencedRelation: "shift_series"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      skills: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          org_id: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          org_id: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          org_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "skills_org_id_fkey"
             columns: ["org_id"]
             isOneToOne: false
             referencedRelation: "organizations"
@@ -1874,7 +2327,7 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "shifts_carer_id_fkey"
+            foreignKeyName: "shift_assignments_carer_id_fkey"
             columns: ["carer_id"]
             isOneToOne: false
             referencedRelation: "carers"
@@ -1903,6 +2356,62 @@ export type Database = {
           },
         ]
       }
+      v_roster_visits: {
+        Row: {
+          actual_end: string | null
+          actual_start: string | null
+          carers: Json | null
+          client_id: string | null
+          client_name: string | null
+          created_at: string | null
+          end_time: string | null
+          id: string | null
+          is_series_exception: boolean | null
+          location_id: string | null
+          notes: string | null
+          occurrence_date: string | null
+          open_slots: number | null
+          org_id: string | null
+          published_at: string | null
+          required_carers: number | null
+          required_skills: string[] | null
+          roster_state: string | null
+          series_id: string | null
+          start_time: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shifts_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shifts_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shifts_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shifts_series_id_fkey"
+            columns: ["series_id"]
+            isOneToOne: false
+            referencedRelation: "shift_series"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       v_unassigned_shifts: {
         Row: {
           client_id: string | null
@@ -1910,6 +2419,7 @@ export type Database = {
           id: string | null
           location_id: string | null
           notes: string | null
+          open_slots: number | null
           org_id: string | null
           start_time: string | null
           status: string | null
@@ -1920,6 +2430,7 @@ export type Database = {
           id?: string | null
           location_id?: string | null
           notes?: string | null
+          open_slots?: never
           org_id?: string | null
           start_time?: string | null
           status?: string | null
@@ -1930,6 +2441,7 @@ export type Database = {
           id?: string | null
           location_id?: string | null
           notes?: string | null
+          open_slots?: never
           org_id?: string | null
           start_time?: string | null
           status?: string | null
@@ -1961,6 +2473,11 @@ export type Database = {
     }
     Functions: {
       calculate_document_status: { Args: { expiry: string }; Returns: string }
+      roster_apply_plan: {
+        Args: { p_org: string; p_plan: Json }
+        Returns: Json
+      }
+      roster_arr_text: { Args: { j: Json }; Returns: string[] }
     }
     Enums: {
       [_ in never]: never

@@ -80,6 +80,43 @@ export function londonMidnight(date: CalendarDate): Date {
   return new Date(result);
 }
 
+/**
+ * The UTC instant of a London wall-clock time on a calendar date. A time that does not exist
+ * (spring-forward gap) resolves to the later instant; a repeated time (autumn) resolves to the
+ * second (GMT) occurrence. Recurring visits rely on this so "08:00" stays 08:00 across BST/GMT.
+ */
+export function londonWallClockToInstant(date: CalendarDate, hour: number, minute: number): Date {
+  const guess = Date.UTC(date.year, date.month - 1, date.day, hour, minute);
+  let result = guess - londonOffsetMs(new Date(guess));
+  result = guess - londonOffsetMs(new Date(result));
+  return new Date(result);
+}
+
+/** YYYY-MM-DD -> CalendarDate. Throws on malformed or impossible dates (e.g. 2026-02-30). */
+export function parseCalendarDate(value: string): CalendarDate {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (!m) throw new Error(`Invalid date: ${value}`);
+  const date = { year: Number(m[1]), month: Number(m[2]), day: Number(m[3]) };
+  if (toDateString(addDays(date, 0)) !== value) throw new Error(`Invalid date: ${value}`);
+  return date;
+}
+
+/** The London calendar date (YYYY-MM-DD) that an instant falls on. */
+export function londonDateOf(instant: Date): string {
+  return toDateString(londonToday(instant));
+}
+
+/** ISO weekday of a calendar date: 1 = Monday ... 7 = Sunday. */
+export function isoWeekdayOf(date: CalendarDate): number {
+  const dow = new Date(Date.UTC(date.year, date.month - 1, date.day)).getUTCDay();
+  return dow === 0 ? 7 : dow;
+}
+
+/** Whole days since the Unix epoch for a calendar date (pure arithmetic, no timezone). */
+export function dayNumber(date: CalendarDate): number {
+  return Math.round(Date.UTC(date.year, date.month - 1, date.day) / 86_400_000);
+}
+
 export function londonToday(now: Date = new Date()): CalendarDate {
   const { year, month, day } = londonParts(now);
   return { year, month, day };

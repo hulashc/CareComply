@@ -28,6 +28,7 @@ export async function GET() {
   const { data } = await ctx.svc.from("shifts")
     .select("client_id, clients!inner(full_name)")
     .eq("carer_id", ctx.carerId)
+    .eq("roster_state", "published") // a draft roster is never visible to carers
     .gte("start_time", today)
     .order("start_time");
   const seen = new Set<string>();

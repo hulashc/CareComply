@@ -22,7 +22,16 @@ export function ShiftActions({ shiftId, status }: { shiftId: string; status: str
 
   if (loading) return <Loader2 className="h-4 w-4 animate-spin" />;
 
-  if (status === "scheduled") {
+  // Unstaffed visits can only be cancelled; once staffed they can be completed too.
+  if (status === "unassigned") {
+    return (
+      <Button size="sm" variant="ghost" className="h-7 rounded-lg text-xs text-red-500 hover:text-red-600 hover:bg-red-50" onClick={() => updateStatus("cancelled")}>
+        Cancel
+      </Button>
+    );
+  }
+
+  if (status === "scheduled" || status === "assigned" || status === "confirmed") {
     return (
       <div className="flex gap-1">
         <Button size="sm" variant="ghost" className="h-7 rounded-lg text-xs text-green-600 hover:text-green-700 hover:bg-green-50" onClick={() => updateStatus("completed")}>

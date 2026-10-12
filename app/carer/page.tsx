@@ -28,7 +28,7 @@ export default async function CarerHomePage() {
   const today = new Date().toISOString().split("T")[0];
 
   const [shiftsRes, tasksRes, handoversRes] = await Promise.all([
-    svc.from("shifts").select("*, clients(full_name)").eq("carer_id", carer.id).gte("start_time", today).order("start_time", { ascending: true }).limit(10),
+    svc.from("shifts").select("*, clients(full_name)").eq("carer_id", carer.id).eq("roster_state", "published").gte("start_time", today).order("start_time", { ascending: true }).limit(10),
     svc.from("tasks").select("*, clients(full_name)").eq("carer_id", carer.id).eq("status", "pending").order("created_at", { ascending: false }).limit(10),
     svc.from("handover_notes").select("*, clients(full_name)").eq("to_carer_id", carer.id).eq("is_read", false).order("created_at", { ascending: false }).limit(5),
   ]);
@@ -87,7 +87,7 @@ export default async function CarerHomePage() {
             {shifts.map((s) => {
               // Only offer check-in within an hour of the start; check-out once checked in.
               const canCheckIn =
-                !s.actual_start && s.status === "scheduled" && new Date(s.start_time).getTime() - Date.now() < 60 * 60 * 1000;
+                !s.actual_start && ["scheduled", "assigned", "confirmed"].includes(s.status) && new Date(s.start_time).getTime() - Date.now() < 60 * 60 * 1000;
               const canCheckOut = !!s.actual_start && !s.actual_end && s.status === "in_progress";
               return (
                 <div key={s.id} className="space-y-1.5">

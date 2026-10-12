@@ -46,6 +46,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     .from("shifts")
     .select("id, carer_id, org_id, status, actual_start, actual_end")
     .eq("id", id)
+    .eq("roster_state", "published") // carers cannot act on a draft roster
     .single();
   if (!shift || shift.carer_id !== carer.id) return NextResponse.json({ error: "Shift not found" }, { status: 404 });
   if (shift.status === "cancelled") return NextResponse.json({ error: "Shift is cancelled" }, { status: 409 });

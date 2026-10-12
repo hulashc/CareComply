@@ -7,6 +7,7 @@ export default {
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./lib/roster-ui/**/*.{ts,tsx}", // status colour classes live in lib/roster-ui/status.ts
     "./src/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
