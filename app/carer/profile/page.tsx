@@ -3,12 +3,12 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Loader2, User, LogOut, Mail, Phone, MapPin, Calendar } from "lucide-react";
-import { carerApi } from "@/lib/carer-api";
+import { Loader2, LogOut, Mail, Phone, MapPin, Calendar } from "lucide-react";
+import { carerApi, type CarerRecord } from "@/lib/carer-api";
 
 export default function CarerProfilePage() {
   const router = useRouter();
-  const [carer, setCarer] = useState<any>(null);
+  const [carer, setCarer] = useState<CarerRecord | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

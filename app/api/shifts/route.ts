@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
     const baseDate = new Date(start_time);
     const endDate = new Date(recurrence_end_date);
     const shifts = [];
-    let current = new Date(baseDate);
+    const current = new Date(baseDate);
 
     while (current <= endDate && shifts.length < MAX_RECURRING_SHIFTS) {
       const s = new Date(current);

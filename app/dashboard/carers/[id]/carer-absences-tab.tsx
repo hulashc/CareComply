@@ -4,10 +4,13 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, CheckCircle2, XCircle } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import type { Tables } from "@/lib/database.types";
+
+type AbsenceRow = Tables<"absences">;
 
 export function CarerAbsencesTab({ carerId }: { carerId: string }) {
-  const [absences, setAbsences] = useState<any[]>([]);
+  const [absences, setAbsences] = useState<AbsenceRow[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

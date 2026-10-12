@@ -27,23 +27,23 @@ async function main() {
   carers.forEach(c => { carerCounts[c.id] = { name: c.full_name, email: c.email || "", count: 0 }; });
 
   const { data: shifts } = await supabase.from("shifts").select("carer_id").eq("org_id", orgId);
-  shifts?.forEach((s: any) => { if (carerCounts[s.carer_id]) carerCounts[s.carer_id].count++; });
+  shifts?.forEach((s) => { if (carerCounts[s.carer_id]) carerCounts[s.carer_id].count++; });
 
   const { data: tasks } = await supabase.from("tasks").select("carer_id").eq("org_id", orgId);
-  tasks?.forEach((t: any) => { if (carerCounts[t.carer_id]) carerCounts[t.carer_id].count += 2; });
+  tasks?.forEach((t) => { if (carerCounts[t.carer_id]) carerCounts[t.carer_id].count += 2; });
 
   const { data: notes } = await supabase.from("care_notes").select("carer_id").eq("org_id", orgId);
-  notes?.forEach((n: any) => { if (carerCounts[n.carer_id]) carerCounts[n.carer_id].count += 2; });
+  notes?.forEach((n) => { if (carerCounts[n.carer_id]) carerCounts[n.carer_id].count += 2; });
 
   const { data: handovers } = await supabase.from("handover_notes").select("from_carer_id, to_carer_id").eq("org_id", orgId);
-  handovers?.forEach((h: any) => {
+  handovers?.forEach((h) => {
     if (carerCounts[h.from_carer_id]) carerCounts[h.from_carer_id].count++;
     if (carerCounts[h.to_carer_id]) carerCounts[h.to_carer_id].count++;
   });
 
-  const sorted = Object.values(carerCounts).sort((a: any, b: any) => b.count - a.count);
+  const sorted = Object.values(carerCounts).sort((a, b) => b.count - a.count);
   console.log("\nCarers by activity score:\n");
-  sorted.forEach((c: any, i: number) => console.log(`  ${i + 1}. ${c.name} — ${c.count} pts — <${c.email}>`));
+  sorted.forEach((c, i) => console.log(`  ${i + 1}. ${c.name} — ${c.count} pts — <${c.email}>`));
   console.log(`\n  Most active: ${sorted[0]?.name} <${sorted[0]?.email}>\n`);
 }
 main().catch(console.error);

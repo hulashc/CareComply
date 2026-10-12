@@ -1,16 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentAdmin } from "@/lib/services/auth-guard";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
-} from "@/components/ui/table";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import { FileSearch, ArrowRight, Search } from "lucide-react";
-import { StatusBadge } from "@/components/shared/status-badge";
+import { FileSearch, Search } from "lucide-react";
 import { EmptyState } from "@/components/shared/empty-state";
-import { Suspense } from "react";
 import { StatusFilter } from "@/components/shared/status-filter";
 import { ApplicationsTable } from "./applications-table";
 import { Pagination } from "@/components/shared/pagination";

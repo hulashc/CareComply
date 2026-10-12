@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { applicationSchema, ApplicationFormValues } from "@/lib/schemas/application";
 
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -90,7 +90,6 @@ function FileUpload({ token, category, label }: { token: string; category: strin
 
 export default function ApplyForm() {
   const params = useParams();
-  const router = useRouter();
   const token = params.token as string;
 
   const [loading, setLoading] = useState(true);

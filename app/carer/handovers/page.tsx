@@ -7,18 +7,18 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, ArrowLeft, MessageSquare, Plus, Search, Send, Filter, Bell } from "lucide-react";
+import { Loader2, ArrowLeft, MessageSquare, Plus, Search, Send, Bell } from "lucide-react";
 import { EmptyState } from "@/components/shared/empty-state";
 import { useToast } from "@/components/shared/toast";
 import Link from "next/link";
-import { carerApi } from "@/lib/carer-api";
+import { carerApi, clientJoinName, type CarerRecord, type CarerClientSummary, type CarerHandover } from "@/lib/carer-api";
 
 export default function CarerHandoversPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const [carer, setCarer] = useState<any>(null);
-  const [clients, setClients] = useState<any[]>([]);
-  const [handovers, setHandovers] = useState<any[]>([]);
+  const [carer, setCarer] = useState<CarerRecord | null>(null);
+  const [clients, setClients] = useState<CarerClientSummary[]>([]);
+  const [handovers, setHandovers] = useState<CarerHandover[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [clientId, setClientId] = useState("");
@@ -49,7 +49,7 @@ export default function CarerHandoversPage() {
     await fetch("/api/handovers", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ client_id: clientId, from_carer_id: carer.id, note_text: noteText, mood: mood || null, concerns: concerns || null, tasks_remaining: tasksRemaining || null }),
+      body: JSON.stringify({ client_id: clientId, from_carer_id: carer?.id, note_text: noteText, mood: mood || null, concerns: concerns || null, tasks_remaining: tasksRemaining || null }),
     });
     setShowForm(false);
     setNoteText("");
@@ -59,7 +59,7 @@ export default function CarerHandoversPage() {
   }
 
   const filtered = handovers.filter(h => {
-    const matchesSearch = (h.clients?.full_name ?? "").toLowerCase().includes(search.toLowerCase());
+    const matchesSearch = clientJoinName(h.clients).toLowerCase().includes(search.toLowerCase());
     const matchesRead = readFilter === "all" || (readFilter === "unread" && !h.is_read) || (readFilter === "read" && h.is_read);
     return matchesSearch && matchesRead;
   });
@@ -141,7 +141,7 @@ export default function CarerHandoversPage() {
             <div className="flex items-start justify-between">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">
-                  <span className="text-sm font-bold text-slate-800">{h.clients?.full_name ?? "Unknown"}</span>
+                  <span className="text-sm font-bold text-slate-800">{clientJoinName(h.clients) || "Unknown"}</span>
                   {!h.is_read && (
                     <Badge className="rounded-full bg-amber-50 text-amber-600 border-0 text-[10px] font-semibold flex items-center gap-1">
                       <Bell className="h-3 w-3" /> New

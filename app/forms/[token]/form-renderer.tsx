@@ -13,8 +13,19 @@ interface FieldUpload {
   error: string | null;
 }
 
-export default function FormRenderer({ schema, token }: { schema: any; token: string }) {
-  const [values, setValues] = useState<Record<string, any>>({});
+export interface FormField {
+  name: string;
+  label: string;
+  type: string;
+  required?: boolean;
+}
+
+export interface FormSchema {
+  fields: FormField[];
+}
+
+export default function FormRenderer({ schema, token }: { schema: FormSchema; token: string }) {
+  const [values, setValues] = useState<Record<string, string>>({});
   const [uploads, setUploads] = useState<Record<string, FieldUpload>>({});
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
@@ -58,7 +69,7 @@ export default function FormRenderer({ schema, token }: { schema: any; token: st
     }
   }
 
-  function handleChange(name: string, value: any) {
+  function handleChange(name: string, value: string) {
     setValues((prev) => ({ ...prev, [name]: value }));
   }
 
@@ -90,7 +101,7 @@ export default function FormRenderer({ schema, token }: { schema: any; token: st
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {schema.fields.map((field: any) => {
+      {schema.fields.map((field) => {
         const fUpload = uploads[field.name];
 
         return (

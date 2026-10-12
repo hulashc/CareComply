@@ -2,6 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import { readFileSync } from "fs";
 import { resolve } from "path";
 import { WebSocket } from "ws";
+import type { Tables, TablesInsert } from "../lib/database.types";
 
 function loadEnv(path: string) {
   const text = readFileSync(path, "utf-8");
@@ -88,7 +89,8 @@ async function main() {
 
   // 4. Get admin
   const { data: admins } = await supabase.from("admins").select("id").eq("org_id", orgId).limit(1);
-  const adminId = admins?.[0]?.id!;
+  const adminId = admins?.[0]?.id;
+  if (!adminId) throw new Error("No admin found. Please run the app and sign up first, then re-run seed.");
 
   // ── Locations ──────────────────────────────────────────────────────────
   const { data: locs } = await supabase.from("locations").insert([
@@ -146,7 +148,7 @@ async function main() {
     { start: "09:00", end: "17:00" }, { start: "14:00", end: "22:00" },
     { start: "15:00", end: "23:00" },
   ];
-  const shiftInserts: any[] = [];
+  const shiftInserts: TablesInsert<"shifts">[] = [];
   for (let d = -21; d <= 14; d++) {
     const dayStr = dateStr(d);
     const numShifts = 4 + Math.floor(Math.random() * 3);
@@ -185,7 +187,7 @@ async function main() {
     { title: "Fluid intake monitoring", category: "nutrition", priority: "medium" },
     { title: "Change dressing", category: "medical", priority: "high" },
   ];
-  const taskInserts: any[] = [];
+  const taskInserts: TablesInsert<"tasks">[] = [];
   allClients.forEach((client) => {
     const numTasks = 3 + Math.floor(Math.random() * 5);
     for (let t = 0; t < numTasks; t++) {
@@ -235,12 +237,12 @@ async function main() {
   console.log(`  Care Notes: ${careNoteInserts.length}`);
 
   // ── Handovers ───────────────────────────────────────────────────────────
-  const groupedByClient: Record<string, any[]> = {};
+  const groupedByClient: Record<string, Tables<"shifts">[]> = {};
   completedShifts.forEach((s) => {
     if (!groupedByClient[s.client_id]) groupedByClient[s.client_id] = [];
     groupedByClient[s.client_id].push(s);
   });
-  const handoverInserts: any[] = [];
+  const handoverInserts: TablesInsert<"handover_notes">[] = [];
   Object.values(groupedByClient).forEach((shiftsForClient) => {
     shiftsForClient.sort((a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime());
     for (let i = 0; i < shiftsForClient.length - 1; i++) {
@@ -362,7 +364,7 @@ async function main() {
   console.log(`  Qualifications: ${allCarers.length}`);
 
   // ── Documents (2-3 per carer) ──────────────────────────────────────────
-  const docInserts: any[] = [];
+  const docInserts: TablesInsert<"documents">[] = [];
   allCarers.forEach((c) => {
     const dtList = dts!;
     const picked = dtList.slice(0, 2 + Math.floor(Math.random() * 2));

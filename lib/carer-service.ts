@@ -17,7 +17,7 @@ export async function getCarerCtx(): Promise<CarerCtx | NextResponse> {
     { cookies: { getAll() { return cookieStore.getAll(); }, setAll() {} } }
   );
   const { data: { user } } = await authClient.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 }) as any;
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const svc = createClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -25,7 +25,7 @@ export async function getCarerCtx(): Promise<CarerCtx | NextResponse> {
     { auth: { autoRefreshToken: false, persistSession: false } }
   );
   const { data: carer } = await svc.from("carers").select("id").eq("auth_id", user.id).single();
-  if (!carer) return NextResponse.json({ error: "Carer not found" }, { status: 404 }) as any;
+  if (!carer) return NextResponse.json({ error: "Carer not found" }, { status: 404 });
 
   return { svc, carerId: carer.id };
 }

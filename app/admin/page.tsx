@@ -3,7 +3,7 @@ import { getCurrentAdmin } from "@/lib/services/auth-guard";
 import { redirect } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
-import { Building2, Users, CreditCard, AlertTriangle, Shield } from "lucide-react";
+import { Building2, Users, CreditCard, Shield } from "lucide-react";
 
 export default async function AdminOverviewPage() {
   const admin = await getCurrentAdmin();

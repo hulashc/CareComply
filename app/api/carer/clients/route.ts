@@ -32,10 +32,11 @@ export async function GET() {
     .order("start_time");
   const seen = new Set<string>();
   const unique: { id: string; full_name: string }[] = [];
-  data?.forEach((s: any) => {
-    if (!seen.has(s.client_id) && s.clients?.full_name) {
+  data?.forEach((s) => {
+    const client = Array.isArray(s.clients) ? s.clients[0] : s.clients;
+    if (!seen.has(s.client_id) && client?.full_name) {
       seen.add(s.client_id);
-      unique.push({ id: s.client_id, full_name: s.clients.full_name });
+      unique.push({ id: s.client_id, full_name: client.full_name });
     }
   });
   return NextResponse.json(unique);
