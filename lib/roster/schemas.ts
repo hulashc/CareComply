@@ -183,6 +183,29 @@ export const rangeQuerySchema = z
     }
   });
 
+/**
+ * GET /api/roster/visits/[id]/suggestions?limit=3
+ * `all=1` returns a compact score for every carer instead (the drag heat map), optionally for a
+ * hypothetical `start`/`end` and with `from_carer` treated as removed from the visit.
+ */
+export const suggestionsQuerySchema = z
+  .strictObject({
+    limit: z.coerce.number().int().min(1).max(10).default(3),
+    all: z.enum(["0", "1", "true", "false"]).optional().transform((v) => v === "1" || v === "true"),
+    start: z.iso.datetime({ offset: true }).optional(),
+    end: z.iso.datetime({ offset: true }).optional(),
+    from_carer: uuid.optional(),
+  })
+  .superRefine((q, ctx) => {
+    if ((q.start === undefined) !== (q.end === undefined)) {
+      ctx.addIssue({ code: "custom", path: ["end"], message: "'start' and 'end' go together" });
+    } else if (q.start && q.end) {
+      const ms = Date.parse(q.end) - Date.parse(q.start);
+      if (ms <= 0) ctx.addIssue({ code: "custom", path: ["end"], message: "'end' must be after 'start'" });
+      else if (ms > 24 * 3_600_000) ctx.addIssue({ code: "custom", path: ["end"], message: "A visit is limited to 24 hours" });
+    }
+  });
+
 // ── Bulk ─────────────────────────────────────────────────────────────────────
 
 export const bulkFilterSchema = z

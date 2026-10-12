@@ -32,6 +32,8 @@ interface Props {
   editor: RosterEditor;
   onClose: () => void;
   onReload: () => void;
+  /** Open the Suggest carers panel for this (existing) visit. */
+  onSuggest?: (v: VisitRow) => void;
 }
 
 const hhmm = (ms: number) => {
@@ -334,6 +336,18 @@ export function VisitForm(p: Props) {
 
         {err && <p role="alert" className="text-xs text-red-600">{err}</p>}
         <div className="flex justify-end gap-2">
+          {v && p.onSuggest && v.status !== "cancelled" && v.status !== "completed" && (
+            <button
+              type="button"
+              onClick={() => {
+                p.onClose();
+                p.onSuggest!(v);
+              }}
+              className="mr-auto rounded-lg border px-3 py-1.5 hover:bg-accent"
+            >
+              Suggest carers
+            </button>
+          )}
           <button type="button" onClick={p.onClose} className="rounded-lg border px-3 py-1.5 hover:bg-accent">Cancel</button>
           <button type="submit" disabled={busy} className="rounded-lg bg-primary px-3 py-1.5 text-primary-foreground disabled:opacity-50">
             {editing ? "Save" : repeat !== "none" ? "Create series" : "Create"}

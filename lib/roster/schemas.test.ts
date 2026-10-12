@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  suggestionsQuerySchema,
   assignSchema,
   bulkSchema,
   carerAttributesSchema,
@@ -158,5 +159,27 @@ describe("carer attributes and client preferences", () => {
     expect(ok(clientPreferencesSchema, { preferred_carer_gender: null, carer_gender_required: true })).toBe(false);
     expect(ok(clientPreferencesSchema, { preferred_carer_gender: "other" })).toBe(false);
     expect(ok(clientPreferencesSchema, { pets: ["dog"], prefers_non_smoking_carer: true, primary_language: "Gujarati" })).toBe(true);
+  });
+});
+
+describe("suggestionsQuerySchema", () => {
+  it("defaults to 3 and accepts 1-10 from the query string", () => {
+    expect(suggestionsQuerySchema.parse({})).toEqual({ limit: 3, all: false });
+    expect(suggestionsQuerySchema.parse({ limit: "10" })).toEqual({ limit: 10, all: false });
+    expect(suggestionsQuerySchema.safeParse({ limit: "0" }).success).toBe(false);
+    expect(suggestionsQuerySchema.safeParse({ limit: "11" }).success).toBe(false);
+    expect(suggestionsQuerySchema.safeParse({ limit: "2.5" }).success).toBe(false);
+    expect(suggestionsQuerySchema.safeParse({ other: "1" }).success).toBe(false);
+  });
+
+  it("accepts the heat-map form: all, a start/end pair of at most 24h, and from_carer", () => {
+    const ok = suggestionsQuerySchema.parse({
+      all: "1", start: "2026-07-14T08:00:00Z", end: "2026-07-14T09:00:00Z", from_carer: "11111111-1111-4111-8111-111111111111",
+    });
+    expect(ok.all).toBe(true);
+    expect(suggestionsQuerySchema.safeParse({ start: "2026-07-14T08:00:00Z" }).success).toBe(false);
+    expect(suggestionsQuerySchema.safeParse({ start: "2026-07-14T09:00:00Z", end: "2026-07-14T08:00:00Z" }).success).toBe(false);
+    expect(suggestionsQuerySchema.safeParse({ start: "2026-07-14T08:00:00Z", end: "2026-07-16T08:00:00Z" }).success).toBe(false);
+    expect(suggestionsQuerySchema.safeParse({ from_carer: "nope" }).success).toBe(false);
   });
 });

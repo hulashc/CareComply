@@ -1,16 +1,20 @@
 // Org-level matching weights. Only overrides are stored (roster_settings.weights); the defaults
 // live here so a new weight in a later phase needs no migration, and orgs that never customised
-// pick up improved defaults. Phase 1 stores and serves the weights; scoring is a later phase.
+// pick up improved defaults. Phase 1 stores and serves the weights; lib/roster/matching (Phase 4) scores with them.
 
 /** Relative importance, each 0-100. They do not need to sum to 100 (scores are normalised later). */
 export const DEFAULT_WEIGHTS = {
-  continuity: 25, // same carer as the client's usual / previous visits
-  preferred_carer: 20, // on the client's preferred list
-  travel: 20, // short travel from the previous visit / home
-  language: 10, // shares the client's language
-  gender_preference: 10, // matches the client's preferred carer gender
+  continuity: 20, // same carer as the client's usual / previous visits
+  preferred_carer: 10, // on the client's preferred list
+  travel: 18, // short travel from the previous visit / home
+  language: 8, // shares the client's language
+  gender_preference: 6, // matches the client's preferred carer gender
   workload_balance: 10, // spreads hours fairly against contracted hours
-  smoker_preference: 5, // respects a non-smoking preference
+  smoker_preference: 3, // respects a non-smoking preference
+  pet_allergy: 3, // not allergic to the client's pets
+  availability_fit: 10, // inside working hours, few gaps between visits
+  skills_experience: 7, // skills beyond the minimum, experience, ratings
+  transport: 5, // can drive when the route needs it
 } as const;
 
 export type WeightKey = keyof typeof DEFAULT_WEIGHTS;

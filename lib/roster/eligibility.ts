@@ -278,7 +278,7 @@ export function fitsWorkingHours(hours: WorkingHours, start: Date, end: Date): b
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
-function normaliseGender(value: string | null | undefined): "female" | "male" | null {
+export function normaliseGender(value: string | null | undefined): "female" | "male" | null {
   const v = value?.trim().toLowerCase();
   if (!v) return null;
   if (["female", "f", "woman"].includes(v)) return "female";

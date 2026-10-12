@@ -7,6 +7,14 @@ describe("matching weights", () => {
     expect(Object.values(DEFAULT_WEIGHTS).reduce((a, b) => a + b, 0)).toBe(100);
   });
 
+  it("has a weight for every Phase 4 matching factor", () => {
+    expect(Object.keys(DEFAULT_WEIGHTS).sort()).toEqual([
+      "availability_fit", "continuity", "gender_preference", "language", "pet_allergy", "preferred_carer",
+      "skills_experience", "smoker_preference", "transport", "travel", "workload_balance",
+    ]);
+    expect(settingsSchema.safeParse({ weights: { transport: 0, availability_fit: 50 } }).success).toBe(true);
+  });
+
   it("an org with no overrides gets the defaults", () => {
     expect(resolveWeights({})).toEqual(DEFAULT_WEIGHTS);
     expect(resolveWeights(null)).toEqual(DEFAULT_WEIGHTS);

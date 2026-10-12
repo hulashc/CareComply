@@ -6,12 +6,14 @@ import { formatLondonShortDate, formatLondonTime, londonMidnight, parseCalendarD
 import { moveVisit, resizeVisit } from "@/lib/roster-ui/commands";
 import { hasBlocking, type Conflict } from "@/lib/roster-ui/conflicts";
 import { OPEN_ROW, type BlockedSpan } from "@/lib/roster-ui/group";
+import { heatColor, pct } from "@/lib/roster-ui/ghost";
 import { inWindow, packLanes, xOf } from "@/lib/roster-ui/layout";
 import { msAt, snapMs } from "@/lib/roster-ui/snap";
 import { DRAFT_CLASS, STATUS_STYLES } from "@/lib/roster-ui/status";
 import type { VisitRow } from "@/lib/roster/types";
 import { cn } from "@/lib/utils";
 import { blockLabel, describeVisit } from "./format";
+import type { DragPreview, GhostScores } from "./use-ghost-scores";
 
 // Resource timeline: rows (carers or clients) down the side, real time across.
 // Virtualized on BOTH axes: @tanstack/react-virtual windows the rows, and each row only renders the
@@ -64,6 +66,10 @@ interface Props {
   now: Date;
   emptyText: string;
   edit?: TimelineEdit;
+  /** Match scores for the visit being dragged (carer rows only): tints each row, greys filtered carers. */
+  ghost?: GhostScores | null;
+  /** Reports what a drag would produce (visit + time) so the parent can fetch `ghost`; null when the drag ends. */
+  onDragPreview?: (preview: DragPreview | null) => void;
 }
 
 const LABEL_W = 184;
@@ -78,7 +84,7 @@ const EDGE_SCROLL = 24; // px from the edge of the visible rows / axis area that
 const DEFAULT_MS = 60 * 60_000;
 
 type Ui =
-  | { kind: "move"; ids: string[]; primary: string; fromRow: string; deltaMs: number; rowId: string }
+  | { kind: "move"; ids: string[]; primary: string; fromRow: string; deltaMs: number; rowId: string; px: number; py: number }
   | { kind: "resize"; id: string; edge: "start" | "end"; ms: number }
   | { kind: "create"; rowId: string; fromMs: number; toMs: number }
   | { kind: "lasso"; x0: number; y0: number; x1: number; y1: number };
@@ -94,7 +100,13 @@ export function ResourceTimeline(p: Props) {
   const justDragged = useRef(false);
   const pendingFocus = useRef(false);
   const [dropRow, setDropRow] = useState<string | null>(null);
+  const [dropPt, setDropPt] = useState<{ x: number; y: number } | null>(null);
   const edit = p.edit;
+  const { ghost, onDragPreview } = p;
+  const onPreviewRef = useRef(onDragPreview);
+  useEffect(() => {
+    onPreviewRef.current = onDragPreview;
+  });
 
   const axisStart = p.rangeStart.getTime();
   const axisWidth = Math.round(xOf(p.rangeEnd.getTime(), axisStart, p.pxPerHour));
@@ -354,7 +366,7 @@ export function ResourceTimeline(p: Props) {
         const deltaMs = snapMs(startMs + raw, edit.snap) - startMs;
         const ri = rowIndexAt(contentY(pt.clientY));
         const rowId2 = ri >= 0 ? layout[ri].row.id : rowId;
-        return { kind: "move", ids, primary: v.id, fromRow: rowId, deltaMs, rowId: rowId2 };
+        return { kind: "move", ids, primary: v.id, fromRow: rowId, deltaMs, rowId: rowId2, px: pt.clientX, py: pt.clientY };
       },
       (u, moved) => {
         if (!moved || !u || u.kind !== "move") return;
@@ -452,6 +464,24 @@ export function ResourceTimeline(p: Props) {
     return out;
   }, [ui, edit, byId, rowsOf, axisStart, p.pxPerHour, p.labelMode]);
 
+  // Tell the parent what a move would produce (visit + snapped time + source carer) so it can fetch match
+  // scores. Keyed on primitives, so moving across rows does not re-report; only a new time slot does.
+  const mv = edit && p.labelMode === "client" && ui?.kind === "move" ? ui : null;
+  const mvVisit = mv ? byId.get(mv.primary) : undefined;
+  const mvStart = mvVisit && mv ? Date.parse(mvVisit.start_time) + mv.deltaMs : null;
+  const mvEnd = mvVisit && mv ? Date.parse(mvVisit.end_time) + mv.deltaMs : null;
+  const mvId = mvVisit?.id ?? null;
+  const mvFrom = mv && mv.fromRow !== OPEN_ROW ? mv.fromRow : null;
+  useEffect(() => {
+    if (!mvId || mvStart === null || mvEnd === null) return;
+    onPreviewRef.current?.({ visitId: mvId, startIso: new Date(mvStart).toISOString(), endIso: new Date(mvEnd).toISOString(), fromCarer: mvFrom });
+    return () => onPreviewRef.current?.(null);
+  }, [mvId, mvStart, mvEnd, mvFrom]);
+
+  const ghostRow = mv ? mv.rowId : dropRow;
+  const ghostCell = ghost && p.labelMode === "client" && ghostRow && ghostRow !== OPEN_ROW ? ghost.scores[ghostRow] : undefined;
+  const ghostPt = mv ? { x: mv.px, y: mv.py } : dropPt;
+
   const dragging = new Set(ui?.kind === "move" ? ui.ids : ui?.kind === "resize" ? [ui.id] : []);
 
   // Header: one cell per day plus hour ticks, both from real instants (so 23/25-hour days are right).
@@ -530,6 +560,27 @@ export function ResourceTimeline(p: Props) {
           />
         )}
 
+        {ghostCell && ghostPt && (
+          <div
+            role="status"
+            className={cn(
+              "pointer-events-none fixed z-[80] max-w-[260px] rounded-lg border px-2 py-1 text-[11px] leading-snug shadow-lg",
+              ghostCell.excluded ? "bg-muted text-muted-foreground" : "bg-popover text-popover-foreground",
+            )}
+            style={{ left: ghostPt.x + 14, top: ghostPt.y + 14 }}
+          >
+            {ghostCell.excluded ? (
+              <b>{ghostCell.reason}</b>
+            ) : (
+              <>
+                <b className="tabular-nums">{pct(ghostCell.total)}</b>
+                {ghostCell.reason ? ` · ${ghostCell.reason}` : ""}
+                {ghostCell.warnings[0] && <span className="block text-amber-700 dark:text-amber-300">{ghostCell.warnings[0]}</span>}
+              </>
+            )}
+          </div>
+        )}
+
         {virtualItems.map((vi) => {
           const { row, boxes, height } = layout[vi.index];
           const blocked = (p.blockedByRow?.get(row.id) ?? []).filter((b) => {
@@ -539,6 +590,7 @@ export function ResourceTimeline(p: Props) {
           });
           const rowGhosts = ghosts.filter((g) => g.rowId === row.id);
           const isDrop = (ui?.kind === "move" && ui.rowId === row.id && ui.rowId !== ui.fromRow) || dropRow === row.id;
+          const cell = ghost && p.labelMode === "client" && row.id !== OPEN_ROW ? ghost.scores[row.id] : undefined;
           return (
             <div
               key={row.id}
@@ -549,10 +601,23 @@ export function ResourceTimeline(p: Props) {
             >
               <div
                 role="rowheader"
-                className={cn("sticky left-0 z-20 flex shrink-0 flex-col justify-center border-r bg-background px-3", isDrop && "bg-primary/10")}
+                className={cn("sticky left-0 z-20 flex shrink-0 flex-col justify-center border-r bg-background px-3", isDrop && "bg-primary/10", cell?.excluded && "text-muted-foreground")}
                 style={{ width: LABEL_W }}
+                title={cell ? (cell.excluded ? cell.message : [cell.reason, ...cell.warnings].filter(Boolean).join("\n")) : undefined}
               >
-                <span className="truncate text-xs font-semibold">{row.label}</span>
+                {cell && (
+                  <span
+                    aria-label={cell.excluded ? `Not available: ${cell.reason}` : `${pct(cell.total)} match`}
+                    className={cn(
+                      "absolute right-1.5 top-1 rounded px-1 text-[10px] font-semibold tabular-nums",
+                      cell.excluded ? "bg-muted text-muted-foreground" : "text-foreground",
+                    )}
+                    style={cell.excluded ? undefined : { backgroundColor: heatColor(cell.total, ghost?.stale ? 0.25 : 0.55) }}
+                  >
+                    {cell.excluded ? cell.reason : pct(cell.total)}
+                  </span>
+                )}
+                <span className={cn("truncate text-xs font-semibold", cell?.excluded && "opacity-60")}>{row.label}</span>
                 {row.sub && <span className="truncate text-[10px] text-muted-foreground">{row.sub}</span>}
                 {row.hours && (
                   <span className={cn("truncate text-[10px]", row.hours.warn ? "font-semibold text-red-600 dark:text-red-400" : "text-muted-foreground")}>
@@ -579,11 +644,14 @@ export function ResourceTimeline(p: Props) {
                     e.preventDefault();
                     e.dataTransfer.dropEffect = "move";
                     setDropRow(row.id);
+                    // Throttled: dragover fires continuously, the chip only needs to be roughly under the pointer.
+                    setDropPt((pt) => (pt && Math.abs(pt.x - e.clientX) < 8 && Math.abs(pt.y - e.clientY) < 8 ? pt : { x: e.clientX, y: e.clientY }));
                   }
                 }}
                 onDragLeave={() => setDropRow((r) => (r === row.id ? null : r))}
                 onDrop={(e) => {
                   setDropRow(null);
+                  setDropPt(null);
                   const id = e.dataTransfer.getData("application/x-roster-visit");
                   if (edit && id && row.id !== OPEN_ROW) {
                     e.preventDefault();
@@ -591,6 +659,17 @@ export function ResourceTimeline(p: Props) {
                   }
                 }}
               >
+                {cell && (
+                  <div
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0 z-0"
+                    style={
+                      cell.excluded
+                        ? { backgroundImage: "repeating-linear-gradient(135deg, rgba(100,116,139,.28) 0 6px, rgba(100,116,139,.12) 6px 12px)" }
+                        : { backgroundColor: heatColor(cell.total, ghost?.stale ? 0.1 : 0.22) }
+                    }
+                  />
+                )}
                 {blocked.map((b, i) => {
                   const l = xOf(b.start, axisStart, p.pxPerHour);
                   return (

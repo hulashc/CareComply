@@ -1,4 +1,5 @@
 import type { VisitRow } from "../roster/types";
+import { scoreKey, type ScoreMap, type SuggestionsResponse } from "./ghost";
 import type { RosterCarer, RosterClient } from "./types";
 
 // Browser-side fetchers for the read-only roster calendar. Same-origin, so the admin's session
@@ -31,6 +32,11 @@ function cached<T>(key: string, load: () => Promise<T>): Promise<T> {
 
 export const invalidate = () => cache.clear();
 
+/** Drop cached match scores and suggestions (any roster edit changes them); other data stays cached. */
+export function invalidateMatching() {
+  for (const k of [...cache.keys()]) if (k.startsWith("score:") || k.startsWith("suggest:")) cache.delete(k);
+}
+
 /** Every visit in [from, to] (London dates), paging through the API 500 at a time. */
 export function fetchVisits(from: string, to: string): Promise<VisitRow[]> {
   return cached(`visits:${from}:${to}`, async () => {
@@ -56,6 +62,32 @@ export function fetchClients(): Promise<RosterClient[]> {
 
 export function fetchSkills(): Promise<{ code: string; name: string }[]> {
   return cached("skills", async () => (await getJson<{ skills: { code: string; name: string; is_active: boolean }[] }>("/api/roster/skills")).skills.filter((s) => s.is_active));
+}
+
+// ── Matching (Phase 5) ──
+
+const SCORE_CACHE_MAX = 120;
+
+/**
+ * Score of every carer for a visit at a (possibly hypothetical) time: the drag heat map. Cached per
+ * slot, and concurrent calls for the same slot share one request. The request itself is never
+ * aborted (a shared promise must not be cancelled by one caller); callers drop stale results instead.
+ */
+export function fetchScoreMap(visitId: string, startIso: string, endIso: string, fromCarer: string | null): Promise<ScoreMap> {
+  const key = scoreKey(visitId, startIso, endIso, fromCarer);
+  if (!cache.has(key)) {
+    // Bound memory during a long drag session: drop the oldest slots first (Map keeps insertion order).
+    const scoreKeys = [...cache.keys()].filter((k) => k.startsWith("score:"));
+    for (const k of scoreKeys.slice(0, Math.max(0, scoreKeys.length - SCORE_CACHE_MAX + 1))) cache.delete(k);
+  }
+  const qs = new URLSearchParams({ all: "1", start: new Date(startIso).toISOString(), end: new Date(endIso).toISOString() });
+  if (fromCarer) qs.set("from_carer", fromCarer);
+  return cached(key, () => getJson<ScoreMap>(`/api/roster/visits/${visitId}/suggestions?${qs}`));
+}
+
+/** The top carers for a visit with factor breakdown, reasons and warnings (the Suggest carers panel). */
+export function fetchSuggestions(visitId: string, limit = 3): Promise<SuggestionsResponse> {
+  return cached(`suggest:${visitId}:${limit}`, () => getJson<SuggestionsResponse>(`/api/roster/visits/${visitId}/suggestions?limit=${limit}`));
 }
 
 // ── Writes (Phase 3) ──

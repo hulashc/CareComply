@@ -23,7 +23,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { addDays, dayNumber, londonDateOf, londonMidnight, londonParts, londonWallClockToInstant, parseCalendarDate } from "@/lib/dates/london";
-import { fetchCarers, fetchClients, fetchSkills, fetchVisits, invalidate } from "@/lib/roster-ui/api";
+import { fetchCarers, fetchClients, fetchSkills, fetchVisits, invalidate, invalidateMatching } from "@/lib/roster-ui/api";
 import { cmd, dayShiftMs, moveVisit, reassign, resizeVisit, unassign, type CarerRef } from "@/lib/roster-ui/commands";
 import { carerConflicts, detectConflicts } from "@/lib/roster-ui/conflicts";
 import { activeFilterCount, filterVisits, visibleCarers, type Filters } from "@/lib/roster-ui/filter";
@@ -42,8 +42,10 @@ import { MonthView } from "./month-view";
 import { OverrideDialog } from "./override-dialog";
 import { PickDialog } from "./pick-dialog";
 import { ResourceTimeline, type TimelineEdit, type TimelineRow } from "./resource-timeline";
+import { SuggestPanel } from "./suggest-panel";
 import { Toolbar, type FilterOptions } from "./toolbar";
 import { UnassignedTray } from "./unassigned-tray";
+import { useGhostScores, type DragPreview } from "./use-ghost-scores";
 import { useRosterEditor } from "./use-roster-editor";
 import { VisitForm, type FormDraft } from "./visit-form";
 import { WeekBoard, type WeekEdit } from "./week-board";
@@ -94,6 +96,9 @@ export function RosterCalendar() {
   const [form, setForm] = useState<FormState | null>(null);
   const [menu, setMenu] = useState<MenuState | null>(null);
   const [picker, setPicker] = useState<Picker>(null);
+  const [suggestFor, setSuggestFor] = useState<string | null>(null);
+  const [dragPreview, setDragPreview] = useState<DragPreview | null>(null);
+  const ghost = useGhostScores(dragPreview);
   const anchor = useRef<{ ms: number; carerId: string | null } | null>(null);
   const isMobile = useMediaQuery("(max-width: 767px)");
 
@@ -133,6 +138,9 @@ export function RosterCalendar() {
     const t = setInterval(() => setNow(new Date()), 60_000);
     return () => clearInterval(t);
   }, []);
+
+  // Any change to the roster changes match scores and suggestions, so drop the cached ones.
+  useEffect(() => invalidateMatching(), [visits]);
 
   // Toasts clear themselves.
   const toastText = editor.toast?.text;
@@ -423,7 +431,10 @@ export function RosterCalendar() {
       items.push({ label: "Paste here", hint: "Ctrl+V", disabled: editor.clipboard.length === 0, onSelect: () => pasteHere(m.ms, m.carerId) });
       items.push({ label: "Duplicate to next day", hint: "Ctrl+D", divider: true, onSelect: () => editor.duplicateSelected([1]) });
       items.push({ label: "Duplicate to other days…", onSelect: () => setPicker({ kind: "duplicate" }) });
-      items.push({ label: "Reassign…", divider: true, onSelect: () => setPicker({ kind: "reassign" }) });
+      if (n === 1 && v.status !== "cancelled" && v.status !== "completed") {
+        items.push({ label: "Suggest carers…", divider: true, onSelect: () => setSuggestFor(v.id) });
+      }
+      items.push({ label: "Reassign…", divider: items[items.length - 1]?.label !== "Suggest carers…", onSelect: () => setPicker({ kind: "reassign" }) });
       items.push({ label: "Unassign", disabled: !sel.some((x) => x.carers.length > 0), onSelect: editor.unassignSelected });
       items.push({ label: n > 1 ? `Delete ${n} visits` : "Delete", hint: "Del", danger: true, divider: true, onSelect: editor.deleteSelected });
     } else {
@@ -508,6 +519,8 @@ export function RosterCalendar() {
             now={now}
             emptyText="No carers match."
             edit={timelineEdit}
+            ghost={ghost}
+            onDragPreview={setDragPreview}
           />
         );
       }
@@ -515,6 +528,7 @@ export function RosterCalendar() {
   })();
 
   const nSel = editor.selection.size;
+  const suggestVisit = suggestFor ? visits.find((v) => v.id === suggestFor) ?? null : null;
 
   return (
     <div className="flex flex-col gap-3">
@@ -578,7 +592,10 @@ export function RosterCalendar() {
               isMobile && "fixed inset-x-2 bottom-2 z-40 h-[55dvh] w-auto rounded-xl bg-background shadow-2xl",
             )}
           >
-            <UnassignedTray items={tray} selectedId={nSel === 1 ? [...editor.selection][0] : null} onSelect={onTray} draggable={!!timelineEdit} />
+            <UnassignedTray items={tray} selectedId={nSel === 1 ? [...editor.selection][0] : null} onSelect={onTray}
+              draggable={!!timelineEdit}
+              onDragVisit={(v) => setDragPreview(v ? { visitId: v.id, startIso: v.start_time, endIso: v.end_time, fromCarer: null } : null)}
+            />
           </aside>
         )}
       </div>
@@ -603,6 +620,15 @@ export function RosterCalendar() {
           editor={editor}
           onClose={() => setForm(null)}
           onReload={refresh}
+          onSuggest={(v) => setSuggestFor(v.id)}
+        />
+      )}
+      {suggestVisit && (
+        <SuggestPanel
+          key={suggestVisit.id}
+          visit={suggestVisit}
+          onAssign={(carer) => act(cmd(`Assign to ${carer.full_name}`, [suggestVisit], [reassign(suggestVisit, carer)]))}
+          onClose={() => setSuggestFor(null)}
         />
       )}
       {menu && <ContextMenu at={menu.at} items={menuItems(menu)} onClose={() => setMenu(null)} />}

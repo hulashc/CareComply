@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { formatLondonShortDate } from "@/lib/dates/london";
 import type { TrayItem } from "@/lib/roster-ui/tray";
+import type { VisitRow } from "@/lib/roster/types";
 import { cn } from "@/lib/utils";
 import { timeRange } from "./format";
 
@@ -23,9 +24,11 @@ interface Props {
   onSelect: (item: TrayItem) => void;
   /** Items can be dragged onto a carer row (HTML5 drag-and-drop). */
   draggable?: boolean;
+  /** A tray item is being dragged (visit) or the drag ended (null): drives the match heat map. */
+  onDragVisit?: (visit: VisitRow | null) => void;
 }
 
-export function UnassignedTray({ items, selectedId, onSelect, draggable }: Props) {
+export function UnassignedTray({ items, selectedId, onSelect, draggable, onDragVisit }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const virtualizer = useVirtualizer({ count: items.length, getScrollElement: () => ref.current, estimateSize: () => ITEM_H, overscan: 8 });
 
@@ -50,7 +53,9 @@ export function UnassignedTray({ items, selectedId, onSelect, draggable }: Props
                     onDragStart={(e) => {
                       e.dataTransfer.setData("application/x-roster-visit", it.visit.id);
                       e.dataTransfer.effectAllowed = "move";
+                      onDragVisit?.(it.visit);
                     }}
+                    onDragEnd={() => onDragVisit?.(null)}
                     onClick={() => onSelect(it)}
                     aria-label={`${it.urgency.label}: ${it.visit.client_name}, ${formatLondonShortDate(it.visit.start_time)} ${timeRange(it.visit)}, needs ${it.needed} carer${it.needed === 1 ? "" : "s"}`}
                     className={cn(
