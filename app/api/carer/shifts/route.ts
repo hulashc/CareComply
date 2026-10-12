@@ -2,7 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import type { Database } from "@/lib/database.types";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 async function getCarerId(): Promise<string | null> {
   const cookieStore = await cookies();

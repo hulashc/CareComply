@@ -19,7 +19,7 @@ async function main() {
   const tables = ["carers", "shifts", "tasks", "handover_notes", "care_notes", "incidents", "clients", "medications", "medication_logs", "care_plans", "absences", "locations", "documents"];
 
   for (const t of tables) {
-    const { data, error } = await supabase.rpc("rls_enabled", { table_name: t } as any).maybeSingle();
+    const { data } = await supabase.rpc("rls_enabled", { table_name: t }).maybeSingle();
     console.log(`${t}:`, data !== null ? data : "unknown");
   }
 

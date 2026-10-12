@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, Plus, X } from "lucide-react";
 
-export function TaskForm({ clientId, carers }: { clientId: string; carers: { id: string; full_name: string }[] }) {
+export function TaskForm({ clientId }: { clientId: string; carers: { id: string; full_name: string }[] }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");

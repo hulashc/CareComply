@@ -9,13 +9,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Loader2, ArrowLeft, CheckCircle2, AlertTriangle, AlertCircle } from "lucide-react";
 import { useToast } from "@/components/shared/toast";
 import Link from "next/link";
-import { carerApi } from "@/lib/carer-api";
+import { carerApi, type CarerClientSummary } from "@/lib/carer-api";
 
 export default function CarerIncidentsPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const [carer, setCarer] = useState<any>(null);
-  const [clients, setClients] = useState<any[]>([]);
+  const [clients, setClients] = useState<CarerClientSummary[]>([]);
   const [clientId, setClientId] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -27,8 +26,7 @@ export default function CarerIncidentsPage() {
   useEffect(() => {
     async function load() {
       try {
-        const [c, shiftClients] = await Promise.all([carerApi.me(), carerApi.clients()]);
-        setCarer(c);
+        const [, shiftClients] = await Promise.all([carerApi.me(), carerApi.clients()]);
         setClients(shiftClients);
       } catch { router.push("/auth/login"); return; }
     }

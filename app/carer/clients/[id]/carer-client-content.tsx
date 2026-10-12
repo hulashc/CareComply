@@ -1,23 +1,28 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Heart, Pill, ClipboardList, AlertTriangle, Loader2, MapPin, Phone, Calendar, Activity } from "lucide-react";
+import { ArrowLeft, Pill, ClipboardList, AlertTriangle, Loader2, MapPin, Phone, Calendar, Activity } from "lucide-react";
 import Link from "next/link";
 import { MedAdminButton } from "@/components/shared/med-admin-button";
-import { carerApi } from "@/lib/carer-api";
+import { carerApi, type CarerRecord } from "@/lib/carer-api";
+import type { Tables } from "@/lib/database.types";
+
+type ClientRow = Tables<"clients">;
+type MedicationRow = Tables<"medications">;
+type CarePlanRow = Tables<"care_plans">;
+type TaskRow = Tables<"tasks">;
 
 export default function CarerClientContent() {
   const params = useParams();
-  const router = useRouter();
   const id = params.id as string;
   const [loading, setLoading] = useState(true);
-  const [client, setClient] = useState<any>(null);
-  const [medications, setMedications] = useState<any[]>([]);
-  const [carePlans, setCarePlans] = useState<any[]>([]);
-  const [tasks, setTasks] = useState<any[]>([]);
-  const [carer, setCarer] = useState<any>(null);
+  const [client, setClient] = useState<ClientRow | null>(null);
+  const [medications, setMedications] = useState<MedicationRow[]>([]);
+  const [carePlans, setCarePlans] = useState<CarePlanRow[]>([]);
+  const [tasks, setTasks] = useState<TaskRow[]>([]);
+  const [carer, setCarer] = useState<CarerRecord | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -25,10 +30,10 @@ export default function CarerClientContent() {
         const c = await carerApi.me();
         setCarer(c);
         const detail = await carerApi.clientDetail(id);
-        setClient(detail.client);
-        setMedications(detail.medications);
-        setCarePlans(detail.carePlans);
-        setTasks(detail.tasks);
+        setClient(detail.client as ClientRow | null);
+        setMedications(detail.medications as MedicationRow[]);
+        setCarePlans(detail.carePlans as CarePlanRow[]);
+        setTasks(detail.tasks as TaskRow[]);
       } catch { setLoading(false); return; }
       setLoading(false);
     }
@@ -64,11 +69,11 @@ export default function CarerClientContent() {
             <h1 className="text-lg font-bold text-slate-900 truncate">{client.full_name}</h1>
             <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 mt-0.5 text-xs text-slate-500">
               {client.address && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{client.address}</span>}
-              {client.phone && <span className="flex items-center gap-1"><Phone className="h-3 w-3" />{client.phone}</span>}
+              {client.emergency_contact_phone && <span className="flex items-center gap-1"><Phone className="h-3 w-3" />{client.emergency_contact_phone}</span>}
             </div>
-            {client.date_of_birth && (
+            {client.dob && (
               <p className="text-xs text-slate-500 mt-0.5 flex items-center gap-1">
-                <Calendar className="h-3 w-3" /> DOB: {new Date(client.date_of_birth).toLocaleDateString()}
+                <Calendar className="h-3 w-3" /> DOB: {new Date(client.dob).toLocaleDateString()}
               </p>
             )}
           </div>
@@ -82,7 +87,7 @@ export default function CarerClientContent() {
             <h2 className="text-sm font-bold text-slate-800">Care Plan</h2>
           </div>
           <div className="space-y-3">
-            {carePlans.map((cp: any) => (
+            {carePlans.map((cp) => (
               <div key={cp.id} className="rounded-lg bg-slate-50 border border-slate-100 p-3">
                 <h3 className="font-bold text-sm text-slate-800">{cp.title}</h3>
                 {cp.goals && <p className="text-sm text-slate-600 mt-1"><span className="font-semibold text-slate-700">Goals:</span> {cp.goals}</p>}
@@ -113,7 +118,7 @@ export default function CarerClientContent() {
                 </tr>
               </thead>
               <tbody>
-                {medications.map((m: any) => (
+                {medications.map((m) => (
                   <tr key={m.id} className="border-b border-slate-100 last:border-0">
                     <td className="py-2.5 pr-2 font-semibold text-slate-800">{m.drug_name}</td>
                     <td className="py-2.5 pr-2 text-slate-500">{m.dosage}</td>
@@ -136,7 +141,7 @@ export default function CarerClientContent() {
             <Badge className="ml-auto rounded-full bg-rose-50 text-rose-600 border-0 text-[10px] font-semibold">{tasks.length}</Badge>
           </div>
           <div className="space-y-1.5">
-            {tasks.map((t: any) => (
+            {tasks.map((t) => (
               <div key={t.id} className="flex items-center gap-2.5 rounded-lg bg-slate-50 border border-slate-100 p-2.5">
                 <ClipboardList className="h-4 w-4 text-rose-400 shrink-0" />
                 <div className="min-w-0">

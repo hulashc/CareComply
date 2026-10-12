@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, AlertCircle, MessageSquare, Clock, Loader2, Search } from "lucide-react";
+import { AlertCircle, MessageSquare, Clock, Loader2, Search } from "lucide-react";
 
 type Handover = {
   id: string;
@@ -40,7 +40,6 @@ export function HandoverActions({
   const [handovers, setHandovers] = useState(initialHandovers);
   const [clients] = useState(initialClients);
   const [carers] = useState(initialCarers);
-  const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [clientId, setClientId] = useState("");
   const [fromCarerId, setFromCarerId] = useState("");

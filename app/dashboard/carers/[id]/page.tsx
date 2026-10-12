@@ -17,7 +17,6 @@ type CarerRow = Tables<"carers">;
 type DocumentRow = Tables<"documents">;
 type QualificationRow = Tables<"qualifications">;
 type ShiftRow = Tables<"shifts">;
-type ClientRow = Tables<"clients">;
 
 const CARER_TABS = [
   { id: "overview", label: "Overview" },
@@ -55,7 +54,6 @@ export default async function CarerDetailPage({
   const { data: documents } = await supabase.from("documents").select("*, document_types(name)").eq("org_id", orgId).eq("owner_id", id).is("deleted_at", null).order("expiry_date", { ascending: true }).returns<(DocumentRow & { document_types: { name: string } | null })[]>();
   const { data: qualifications } = await supabase.from("qualifications").select("*").eq("org_id", orgId).eq("carer_id", id).order("expiry_date", { ascending: true }).returns<QualificationRow[]>();
   const { data: shifts } = await supabase.from("shifts").select("*, clients(full_name)").eq("shifts.org_id", orgId).eq("carer_id", id).order("start_time", { ascending: false }).limit(20).returns<(ShiftRow & { clients: { full_name: string } | null })[]>();
-  const { data: assignedClients } = await supabase.from("shifts").select("client_id, clients!inner(full_name)").eq("shifts.org_id", orgId).eq("carer_id", id).order("start_time", { ascending: false }).limit(50);
 
   const green = documents?.filter(d => d.status === "green").length ?? 0;
   const amber = documents?.filter(d => d.status === "amber").length ?? 0;
