@@ -9,7 +9,7 @@
    - `[ ]` = failed (add notes in the Notes column)
    - `[-]` = skipped (not applicable right now)
 
-> **Prerequisites:** You should be logged in as `hulashc@gmail.com` / `Hhinata55` for admin tests.
+> **Prerequisites:** You should be logged in as the admin test account — see password manager.
 > Auth headers: API tests use the Supabase session cookie — they only work from a logged-in browser.
 > For raw curl tests, use the `x-cron-secret` header where specified, or test via the browser UI.
 
@@ -20,7 +20,7 @@
 | # | Feature | Test Procedure | Expected | Actual | Notes |
 |---|---|---|---|---|---|
 | 1 | Login page | Open `http://localhost:3000/auth/login` | Login form appears | 200 ✅ | |
-| 2 | Login flow | Login with `hulashc@gmail.com` / `Hhinata55` | Redirected to `/dashboard` | Need browser | Password auth not working from CLI — login via browser to confirm |
+| 2 | Login flow | Login with admin test account — see password manager | Redirected to `/dashboard` | Need browser | Password auth not working from CLI — login via browser to confirm |
 | 3 | Sign up page | Open `http://localhost:3000/auth/sign-up` | Sign-up form appears | 200 ✅ | |
 | 4 | Forgot password | Open `http://localhost:3000/auth/forgot-password` | Email input + submit | 200 ✅ | |
 | 5 | Update password | Open `http://localhost:3000/auth/update-password` | New password form | 200 ✅ | |
